@@ -13,6 +13,7 @@
 		4387F193269011FF00F6355D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4387F191269011FF00F6355D /* Main.storyboard */; };
 		4387F1952690120000F6355D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4387F1942690120000F6355D /* Assets.xcassets */; };
 		4387F1982690120000F6355D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4387F1962690120000F6355D /* LaunchScreen.storyboard */; };
+		4387F1A82690195900F6355D /* NiceSpot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4387F1A62690195900F6355D /* NiceSpot.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,8 @@
 		4387F1942690120000F6355D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4387F1972690120000F6355D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4387F1992690120000F6355D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4387F1A0269012F600F6355D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		4387F1A72690195900F6355D /* NiceSpot.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = NiceSpot.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +43,7 @@
 		4387F17F269011FF00F6355D = {
 			isa = PBXGroup;
 			children = (
+				4387F1A0269012F600F6355D /* README.md */,
 				4387F18A269011FF00F6355D /* NiceSpot */,
 				4387F189269011FF00F6355D /* Products */,
 			);
@@ -56,15 +60,48 @@
 		4387F18A269011FF00F6355D /* NiceSpot */ = {
 			isa = PBXGroup;
 			children = (
-				4387F18B269011FF00F6355D /* AppDelegate.swift */,
-				4387F18D269011FF00F6355D /* SceneDelegate.swift */,
-				4387F18F269011FF00F6355D /* ViewController.swift */,
-				4387F191269011FF00F6355D /* Main.storyboard */,
-				4387F1942690120000F6355D /* Assets.xcassets */,
-				4387F1962690120000F6355D /* LaunchScreen.storyboard */,
-				4387F1992690120000F6355D /* Info.plist */,
+				4387F1A4269018ED00F6355D /* View */,
+				4387F1A3269018E700F6355D /* ViewModel */,
+				4387F1A52690190900F6355D /* Model */,
+				4387F1A2269015A300F6355D /* Supporting files */,
 			);
 			path = NiceSpot;
+			sourceTree = "<group>";
+		};
+		4387F1A2269015A300F6355D /* Supporting files */ = {
+			isa = PBXGroup;
+			children = (
+				4387F18B269011FF00F6355D /* AppDelegate.swift */,
+				4387F18D269011FF00F6355D /* SceneDelegate.swift */,
+				4387F1942690120000F6355D /* Assets.xcassets */,
+				4387F1992690120000F6355D /* Info.plist */,
+			);
+			path = "Supporting files";
+			sourceTree = "<group>";
+		};
+		4387F1A3269018E700F6355D /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				4387F18F269011FF00F6355D /* ViewController.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		4387F1A4269018ED00F6355D /* View */ = {
+			isa = PBXGroup;
+			children = (
+				4387F191269011FF00F6355D /* Main.storyboard */,
+				4387F1962690120000F6355D /* LaunchScreen.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		4387F1A52690190900F6355D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				4387F1A62690195900F6355D /* NiceSpot.xcdatamodeld */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,6 +111,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4387F19C2690120000F6355D /* Build configuration list for PBXNativeTarget "NiceSpot" */;
 			buildPhases = (
+				4387F19F2690128C00F6355D /* ShellScript */,
 				4387F184269011FF00F6355D /* Sources */,
 				4387F185269011FF00F6355D /* Frameworks */,
 				4387F186269011FF00F6355D /* Resources */,
@@ -132,6 +170,26 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		4387F19F2690128C00F6355D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which swiftlint >/dev/null; then\n# swiftlint autocorrect && swiftlint\n    swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4387F184269011FF00F6355D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -139,6 +197,7 @@
 			files = (
 				4387F190269011FF00F6355D /* ViewController.swift in Sources */,
 				4387F18C269011FF00F6355D /* AppDelegate.swift in Sources */,
+				4387F1A82690195900F6355D /* NiceSpot.xcdatamodeld in Sources */,
 				4387F18E269011FF00F6355D /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -288,7 +347,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = W8A2PVHCN3;
-				INFOPLIST_FILE = NiceSpot/Info.plist;
+				INFOPLIST_FILE = "NiceSpot/Supporting files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -296,7 +355,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = fr.hludovic.NiceSpot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -307,7 +366,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = W8A2PVHCN3;
-				INFOPLIST_FILE = NiceSpot/Info.plist;
+				INFOPLIST_FILE = "NiceSpot/Supporting files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -315,7 +374,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = fr.hludovic.NiceSpot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -341,6 +400,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		4387F1A62690195900F6355D /* NiceSpot.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				4387F1A72690195900F6355D /* NiceSpot.xcdatamodel */,
+			);
+			currentVersion = 4387F1A72690195900F6355D /* NiceSpot.xcdatamodel */;
+			path = NiceSpot.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 4387F180269011FF00F6355D /* Project object */;
 }
