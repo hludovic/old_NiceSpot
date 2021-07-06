@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		430788242694A6560089DF53 /* Spot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430788232694A6560089DF53 /* Spot.swift */; };
+		4347D04F26922428001E59A7 /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4347D04E26922428001E59A7 /* PersistenceManager.swift */; };
 		4387F18C269011FF00F6355D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4387F18B269011FF00F6355D /* AppDelegate.swift */; };
 		4387F18E269011FF00F6355D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4387F18D269011FF00F6355D /* SceneDelegate.swift */; };
 		4387F190269011FF00F6355D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4387F18F269011FF00F6355D /* ViewController.swift */; };
@@ -17,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		430788232694A6560089DF53 /* Spot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spot.swift; sourceTree = "<group>"; };
+		4347D04E26922428001E59A7 /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
 		4387F188269011FF00F6355D /* NiceSpot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NiceSpot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4387F18B269011FF00F6355D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4387F18D269011FF00F6355D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -100,6 +104,8 @@
 			isa = PBXGroup;
 			children = (
 				4387F1A62690195900F6355D /* NiceSpot.xcdatamodeld */,
+				430788232694A6560089DF53 /* Spot.swift */,
+				4347D04E26922428001E59A7 /* PersistenceManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -197,8 +203,10 @@
 			files = (
 				4387F190269011FF00F6355D /* ViewController.swift in Sources */,
 				4387F18C269011FF00F6355D /* AppDelegate.swift in Sources */,
+				430788242694A6560089DF53 /* Spot.swift in Sources */,
 				4387F1A82690195900F6355D /* NiceSpot.xcdatamodeld in Sources */,
 				4387F18E269011FF00F6355D /* SceneDelegate.swift in Sources */,
+				4347D04F26922428001E59A7 /* PersistenceManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
