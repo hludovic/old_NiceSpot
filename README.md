@@ -17,4 +17,4 @@ This application implements UIkit. [The SwiftUI version can be found here][1]
 ![Image][2]
 
 [1]: https://github.com/hludovic/NiceSpot
-[2]: Documentation/previews.webp "Preview"
+[2]: Documentation/previews.jpg "Preview"

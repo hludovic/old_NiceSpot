@@ -1,5 +1,5 @@
 //
-//  PersistenceManager.swift
+//  PersistenceController.swift
 //  NiceSpot
 //
 //  Created by Ludovic HENRY on 04/07/2021.
@@ -8,7 +8,7 @@
 import CoreData
 import CloudKit
 
-class PersistenceManager {
+class PersistenceController {
 
 //    // MARK: - CloudKit Static Property
 //
@@ -22,7 +22,13 @@ class PersistenceManager {
 
     // MARK: - CoreData Static Property
 
-    static let shared = PersistenceManager()
+    static let shared = PersistenceController()
+
+    static var tests: PersistenceController = {
+        let result = PersistenceController(inMemory: true)
+        let viewContext = result.container.viewContext
+        return result
+    }()
 
     let container: NSPersistentContainer
 

@@ -18,9 +18,7 @@ class Spot {
     let latitude: Double
     let pictureName: String
     let municipality: Spot.Municipality
-    var isFavorite: Bool {
-        return false
-    }
+    private static let viewContext = PersistenceController.shared.container.viewContext
 
     init(id: String, date: Date, title: String, category: Spot.Category,
          detail: String, longitude: Double, latitude: Double,
@@ -36,39 +34,34 @@ class Spot {
         self.municipality = municipality
     }
 
-    static func getAll(context: NSManagedObjectContext, completion: @escaping (Result<[Spot], SpotErrors>) -> Void) {
+    func isFavorite(context: NSManagedObjectContext = viewContext) -> Bool {
+        let request: NSFetchRequest<FavoriteMO> = FavoriteMO.fetchRequest()
+        let predicate = NSPredicate(format: "spotID == %@", self.recordID)
+        request.predicate = predicate
+        guard let result = try? context.fetch(request) else { return false }
+        if result.count > 0 {
+            return true
+        } else { return false}
+    }
+
+    static func getAll(context: NSManagedObjectContext = viewContext, completion: @escaping (Result<[Spot], SpotErrors>) -> Void) {
         let request: NSFetchRequest<SpotMO> = SpotMO.fetchRequest()
+        let sort = NSSortDescriptor(key: "creationDate", ascending: false)
+        request.sortDescriptors = [sort]
         do {
             let spotsFetched = try context.fetch(request)
             var result: [Spot] = []
             for spotFetched in spotsFetched {
-                guard
-                    let spotID = spotFetched.recordID,
-                    let date = spotFetched.creationDate,
-                    let title = spotFetched.title,
-                    let detail = spotFetched.detail,
-                    let categoryString = spotFetched.category,
-                    let pictureName = spotFetched.pictureName,
-                    let municipalityString = spotFetched.municipality
-                else { return completion(.failure(.failReadingSpotsMO)) }
-                let spot = Spot(id: spotID,
-                                date: date,
-                                title: title,
-                                category: Spot.Category(rawValue: categoryString) ?? .unknown,
-                                detail: detail,
-                                longitude: spotFetched.longitude,
-                                latitude: spotFetched.latitude,
-                                picture: pictureName,
-                                municipality: Spot.Municipality(rawValue: municipalityString) ?? .unknown
-                )
-                result.append(spot)
+                guard let spoty = managedObjectToSpot(spotFetched) else {  return completion(.failure(.failReadingSpotsMO)) }
+                result.append(spoty)
             }
             return completion(.success(result))
         } catch {
             return completion(.failure(.failFetchingSpotsMO))
         }
-        print("OK")
     }
+
+//    static func getAllFavorite(context: NSManagedObjectContext = viewContext, @escaping ()
 
     func searchSpots() {
     }
@@ -76,58 +69,61 @@ class Spot {
     func refresh() {
     }
 
-    func setFavorite(_ favorite: Bool) {
+    func setFavorite(context: NSManagedObjectContext = viewContext, _ favorite: Bool) {
     }
 }
 
-// MARK: - Enum
+private extension Spot {
 
-extension Spot {
-
-    /// The list of categories in which a spot can be placed.
-    enum Category: String, CaseIterable {
-        case unknown = "Unknown"
-        case beach = "Beach"
-        case mountain = "Mountain"
-        case river = "River"
-        case waterfall = "Waterfall"
+    static func managedObjectToSpot(_ spotMO: SpotMO) -> Spot? {
+        guard
+            let spotID = spotMO.recordID,
+            let date = spotMO.creationDate,
+            let title = spotMO.title,
+            let detail = spotMO.detail,
+            let categoryString = spotMO.category,
+            let pictureName = spotMO.pictureName,
+            let municipalityString = spotMO.municipality
+        else { return nil }
+        let spot = Spot(id: spotID,
+                        date: date,
+                        title: title,
+                        category: Spot.Category(rawValue: categoryString) ?? .unknown,
+                        detail: detail,
+                        longitude: spotMO.longitude,
+                        latitude: spotMO.latitude,
+                        picture: pictureName,
+                        municipality: Spot.Municipality(rawValue: municipalityString) ?? .unknown
+        )
+        return spot
     }
 
-    /// The list of municipalities in which a spot can be found.
-    enum Municipality: String, CaseIterable {
-        case unknown = "Unknown"
-        case basseTerre = "Basse-Terre"
-        case anseBertrand = "Anse-Bertrand"
-        case baieMahault = "Baie-Mahault"
-        case baillif = "Baillif"
-        case bouillante = "Bouillante"
-        case capesterreBelleEau = "Capesterre-Belle-Eau"
-        case capesterreDeMarieGalante = "Capesterre-de-Marie-Galante"
-        case deshaies = "Deshaies"
-        case gourbeyre = "Gourbeyre"
-        case goyave = "Goyave"
-        case grandBourg = "Grand-Bourg"
-        case desirade = "La Désirade"
-        case lamentin = "Lamentin"
-        case leGosier = "Le Gosier"
-        case leMoule = "Le Moule"
-        case lesAbymes = "Les Abymes"
-        case morneALEau = "Morne-à-l'Eau"
-        case petitBourg = "Petit-Bourg"
-        case petitCanal = "Petit-Canal"
-        case pointeNoire = "Pointe-Noire"
-        case pointeAPitre = "Pointe-à-Pitre"
-        case portLouis = "Port-Louis"
-        case saintClaude = "Saint-Claude"
-        case saintFrancois = "Saint-François"
-        case saintLouis = "Saint-Louis"
-        case sainteAnne = "Sainte-Anne"
-        case sainteRose = "Sainte-Rose"
-        case terreDeBas = "Terre-de-Bas"
-        case terreDeHaut = "Terre-de-Haut"
-        case troisRivieres = "Trois-Rivières"
-        case vieuxFort = "Vieux-Fort"
-        case vieuxHabitants = "Vieux-Habitants"
+    func getSpot(context: NSManagedObjectContext = viewContext, id: String) -> Spot? {
+        let request: NSFetchRequest<SpotMO> = SpotMO.fetchRequest()
+        let predicate = NSPredicate(format: "recordID == %@", id)
+        request.predicate = predicate
+        guard let result = try? context.fetch(request), result.count > 0 else { return nil }
+        guard let spotMO = result.first else { return nil }
+        guard let spot = Spot.managedObjectToSpot(spotMO) else { return nil }
+        return spot
+    }
+
+    static func getFavoriteIDs(context: NSManagedObjectContext = viewContext) -> [String] {
+        let request: NSFetchRequest<FavoriteMO> = FavoriteMO.fetchRequest()
+        if let fetchedFavoriteIDs = try? context.fetch(request) {
+            var result: [String] = []
+            for fetchedFavoriteID in fetchedFavoriteIDs {
+                guard let favorite = fetchedFavoriteID.spotID else { return [] }
+                result.append(favorite)
+            }
+            return result
+        } else { return [] }
+    }
+
+    func saveToFavorite() {
+    }
+
+    func removeToFavorite() {
     }
 }
 
