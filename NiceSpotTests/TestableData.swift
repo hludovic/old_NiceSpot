@@ -27,12 +27,27 @@ class TestableData {
     // MARK: - Clear all spots saved
 
     static func clearData() {
+        clearSpots()
+        clearFavorites()
+    }
+    
+    private static func clearSpots() {
         let fetchRequest: NSFetchRequest<SpotMO> = SpotMO.fetchRequest()
         let objs = try! PersistenceController.tests.container.viewContext.fetch(fetchRequest)
         for case let obj as NSManagedObject in objs {
             PersistenceController.tests.container.viewContext.delete(obj)
         }
         try! PersistenceController.tests.container.viewContext.save()
+    }
+
+    private static func clearFavorites() {
+        let fetchRequest: NSFetchRequest<FavoriteMO> = FavoriteMO.fetchRequest()
+        let objs = try! PersistenceController.tests.container.viewContext.fetch(fetchRequest)
+        for case let obj as NSManagedObject in objs {
+            PersistenceController.tests.container.viewContext.delete(obj)
+        }
+        try! PersistenceController.tests.container.viewContext.save()
+
     }
 
     // MARK: - Save a spot with a personalized content

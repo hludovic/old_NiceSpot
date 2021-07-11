@@ -57,3 +57,24 @@ extension Spot {
         case vieuxHabitants = "Vieux-Habitants"
     }
 }
+
+// MARK: - Errors
+
+enum SpotError: Error {
+    case failReadingSpotsMO
+    case failFetchingSpotsMO
+    case failSavingFavoriteMO
+}
+
+extension SpotError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .failReadingSpotsMO:
+            return NSLocalizedString("ERROR", comment: "")
+        case .failFetchingSpotsMO:
+            return NSLocalizedString("ERROR", comment: "")
+        case .failSavingFavoriteMO:
+            return NSLocalizedString("ERROR", comment: "")
+        }
+    }
+}

@@ -28,16 +28,10 @@ class SpotTests: XCTestCase {
         let date = TestableData.getDate(year: 1900, month: 01, day: 1)
         TestableData.saveFakeSpot(date: date, category: "blabla", municipality: "blabla")
         // When
-        Spot.getAll(context: viewContext) { result in
-            switch result {
-            // Then
-            case .failure(let error):
-                XCTAssertNil(error)
-            case .success(let spots):
-                XCTAssertEqual(4, spots.count)
-                XCTAssertEqual("NewSpot", spots.last?.title)
-            }
-        }
+        let spots = Spot.getAll(context: viewContext)
+        // Then
+        XCTAssertEqual(4, spots.count)
+        XCTAssertEqual("NewSpot", spots.last?.title)
     }
 
     func testSavedAnRecentSpot_WhenGetAllSpots_ThenNewSpotSavedOnFirst() {
@@ -46,82 +40,86 @@ class SpotTests: XCTestCase {
         let date = TestableData.getDate(year: 2021, month: 01, day: 1)
         TestableData.saveFakeSpot(date: date, category: "blabla", municipality: "blabla")
         // When
-        Spot.getAll(context: viewContext) { result in
-            switch result {
-            // Then
-            case .failure(let error):
-                XCTAssertNil(error)
-            case .success(let spots):
-                XCTAssertEqual(4, spots.count)
-                XCTAssertEqual("NewSpot", spots.first?.title)
-            }
-        }
+        let spots = Spot.getAll(context: viewContext)
+        // Then
+        XCTAssertEqual(4, spots.count)
+        XCTAssertEqual("NewSpot", spots.first?.title)
     }
 
     func testSavedAWrongCategorySpot_WhenGetTheSpot_ThenCategoryIsUnknown() {
         // Given
         TestableData.saveFakeSpot(date: Date(), category: "blabla", municipality: "blabla")
         // When
-        Spot.getAll(context: viewContext) { result in
-            switch result {
-            // Then
-            case .failure(let error):
-                XCTAssertNil(error)
-            case .success(let spots):
-                XCTAssertEqual(1, spots.count)
-                XCTAssertEqual(Spot.Category.unknown, spots.first?.category)
-                XCTAssertEqual(Spot.Municipality.unknown, spots.first?.municipality)
-            }
-        }
+        let spots = Spot.getAll(context: viewContext)
+        // Then
+        XCTAssertEqual(1, spots.count)
+        XCTAssertEqual(Spot.Category.unknown, spots.first?.category)
+        XCTAssertEqual(Spot.Municipality.unknown, spots.first?.municipality)
     }
 
-    func testIsfavorite() {
+    // MARK: - Favorite
+
+    func testSpotsAreSaved_WhenSaveASpotsToFavorite_ThenSpotIsFavorite() {
         TestableData.saveFakeSpots()
-        Spot.getAll(context: viewContext) { result in
-            switch result {
-            // Then
-            case .failure(let error):
-                XCTAssertNil(error)
-            case .success(let spots):
-                XCTAssertEqual(3, spots.count)
-                XCTAssertEqual(false, spots.first?.isFavorite(context: self.viewContext))
-            }
-        }
+        let spots = Spot.getAll(context: viewContext)
+        XCTAssertEqual(3, spots.count)
+        XCTAssertFalse(spots.first!.isFavorite(context: self.viewContext))
+        var favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        XCTAssertEqual(0, favoriteSpots.count)
+        // When
+        XCTAssertTrue(spots.first!.saveToFavorite(context: self.viewContext))
+        XCTAssertTrue(spots.last!.saveToFavorite(context: self.viewContext))
+        // Then
+        XCTAssertTrue(spots.first!.isFavorite(context: self.viewContext))
+        favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        XCTAssertEqual(2, favoriteSpots.count)
     }
 
-//    func testGOGOGOG() {
-//        // Given
-//        TestableData.saveFakeSpots()
-//        // When
-//        Spot.getAll(context: viewContext) { result in
-//            switch result {
-//            // Then
-//            case .failure(let error):
-//                XCTAssertNil(error)
-//            case .success(let spots):
-//                print("❌\(spots.first?.isFavorite())")
-//            }
-//        }
-//    }
+    func testSpotsAreSaved_WhenSaveASpotTwiceToFavorite_ThenError() {
+        TestableData.saveFakeSpots()
+        let spots = Spot.getAll(context: viewContext)
+        XCTAssertEqual(3, spots.count)
+        XCTAssertFalse(spots.first!.isFavorite(context: self.viewContext))
+        var favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        XCTAssertEqual(0, favoriteSpots.count)
+        // When
+        XCTAssertTrue(spots.first!.saveToFavorite(context: self.viewContext))
+        // Then
+        XCTAssertFalse(spots.first!.saveToFavorite(context: self.viewContext))
+        favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        XCTAssertEqual(1, favoriteSpots.count)
+    }
 
-//    func testGOGOGOG2() {
-//        // Given
-//        TestableData.saveFakeSpots()
-//        Spot.getAll(context: viewContext) { result in
-//            switch result {
-//            // Then
-//            case .failure(let error):
-//                XCTAssertNil(error)
-//            case .success(let spots):
-//                XCTAssertEqual(3, spots.count)
-//                print("🅾️\(spots.first?.recordID)")
-//            }
-//        }
-//
-//
-//        let spot = Spot.getSpot(context: viewContext, id: "1D997030-81B2-7E64-4F62-87EAAD8EE7B3")
-//        XCTAssertEqual(spot?.title, "La Cascade aux Ecrevisses")
-//
-//    }
+    func testTwoSpotsSavedToFavorite_WhenRemoveOneToFavorite_ThenThereIsOneFavorite() {
+        TestableData.saveFakeSpots()
+        let spots = Spot.getAll(context: viewContext)
+        XCTAssertEqual(3, spots.count)
+        XCTAssertTrue(spots.first!.saveToFavorite(context: self.viewContext))
+        XCTAssertTrue(spots.first!.isFavorite(context: self.viewContext))
+        XCTAssertTrue(spots.last!.saveToFavorite(context: self.viewContext))
+        XCTAssertTrue(spots.last!.isFavorite(context: self.viewContext))
+        var favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        XCTAssertEqual(2, favoriteSpots.count)
+        // When
+        XCTAssertTrue(spots.first!.removeToFavorite(context: self.viewContext))
+        // Then
+        favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        XCTAssertEqual(1, favoriteSpots.count)
+    }
 
+    func testSpotSavedToFavorite_WhenRemoveTwiceToFavorite_ThenError() {
+        TestableData.saveFakeSpots()
+        let spots = Spot.getAll(context: viewContext)
+        XCTAssertEqual(3, spots.count)
+        XCTAssertTrue(spots.first!.saveToFavorite(context: self.viewContext))
+        XCTAssertTrue(spots.first!.isFavorite(context: self.viewContext))
+        var favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        XCTAssertEqual(1, favoriteSpots.count)
+        // When
+        XCTAssertTrue(spots.first!.removeToFavorite(context: self.viewContext))
+        // Then
+        XCTAssertFalse(spots.first!.removeToFavorite(context: self.viewContext))
+        favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        XCTAssertEqual(0, favoriteSpots.count)
+    }
 }

@@ -20,9 +20,9 @@ class Spot {
     let municipality: Spot.Municipality
     private static let viewContext = PersistenceController.shared.container.viewContext
 
-    init(id: String, date: Date, title: String, category: Spot.Category,
-         detail: String, longitude: Double, latitude: Double,
-         picture: String, municipality: Spot.Municipality) {
+    private init(id: String, date: Date, title: String, category: Spot.Category,
+                 detail: String, longitude: Double, latitude: Double,
+                 picture: String, municipality: Spot.Municipality) {
         self.recordID = id
         self.creationDate = date
         self.title = title
@@ -39,37 +39,59 @@ class Spot {
         let predicate = NSPredicate(format: "spotID == %@", self.recordID)
         request.predicate = predicate
         guard let result = try? context.fetch(request) else { return false }
-        if result.count > 0 {
-            return true
-        } else { return false}
+        if result.count > 0 { return true }
+        return false
     }
 
-    static func getAll(context: NSManagedObjectContext = viewContext, completion: @escaping (Result<[Spot], SpotErrors>) -> Void) {
+    static func getAll(context: NSManagedObjectContext = viewContext) -> [Spot] {
         let request: NSFetchRequest<SpotMO> = SpotMO.fetchRequest()
         let sort = NSSortDescriptor(key: "creationDate", ascending: false)
         request.sortDescriptors = [sort]
-        do {
-            let spotsFetched = try context.fetch(request)
-            var result: [Spot] = []
-            for spotFetched in spotsFetched {
-                guard let spoty = managedObjectToSpot(spotFetched) else {  return completion(.failure(.failReadingSpotsMO)) }
-                result.append(spoty)
-            }
-            return completion(.success(result))
-        } catch {
-            return completion(.failure(.failFetchingSpotsMO))
+        guard let spotsFetched = try? context.fetch(request) else { return [] }
+        var result: [Spot] = []
+        for spotFetched in spotsFetched {
+            guard let spoty = managedObjectToSpot(spotFetched) else { return [] }
+            result.append(spoty)
         }
+        return result
     }
 
-//    static func getAllFavorite(context: NSManagedObjectContext = viewContext, @escaping ()
-
-    func searchSpots() {
+    static func getAllFavorite(context: NSManagedObjectContext = viewContext) -> [Spot] {
+        let favoriteIDs = getFavoriteIDs(context: context)
+        guard favoriteIDs.count > 0 else { return [] }
+        var result: [Spot] = []
+        for favoriteId in favoriteIDs {
+            guard let spot = getSpot(context: context, id: favoriteId) else { return [] }
+            result.append(spot)
+        }
+        return result
     }
 
-    func refresh() {
+//    func searchSpots() {
+//    }
+
+    func saveToFavorite(context: NSManagedObjectContext = viewContext) -> Bool {
+        guard !isFavorite(context: context) else { return false }
+        let favoriteMO = FavoriteMO(context: context)
+        favoriteMO.spotID = self.recordID
+        do {
+            try context.save()
+        } catch {
+            return false
+        }
+        return true
     }
 
-    func setFavorite(context: NSManagedObjectContext = viewContext, _ favorite: Bool) {
+    func removeToFavorite(context: NSManagedObjectContext = viewContext) -> Bool {
+        guard isFavorite(context: context) else { return false }
+        guard let favoriteMO = getFavoriteMO(context: context, id: self.recordID) else { return false }
+        context.delete(favoriteMO)
+        do {
+            try context.save()
+        } catch {
+            return false
+        }
+        return true
     }
 }
 
@@ -98,7 +120,16 @@ private extension Spot {
         return spot
     }
 
-    func getSpot(context: NSManagedObjectContext = viewContext, id: String) -> Spot? {
+    func getFavoriteMO(context: NSManagedObjectContext = viewContext, id: String) -> FavoriteMO? {
+        let request: NSFetchRequest<FavoriteMO> = FavoriteMO.fetchRequest()
+        let predicate = NSPredicate(format: "spotID == %@", id)
+        request.predicate = predicate
+        guard let result = try? context.fetch(request)else { return nil }
+        guard let favoriteMO = result.first else { return nil }
+        return favoriteMO
+    }
+
+    static func getSpot(context: NSManagedObjectContext = viewContext, id: String) -> Spot? {
         let request: NSFetchRequest<SpotMO> = SpotMO.fetchRequest()
         let predicate = NSPredicate(format: "recordID == %@", id)
         request.predicate = predicate
@@ -110,37 +141,14 @@ private extension Spot {
 
     static func getFavoriteIDs(context: NSManagedObjectContext = viewContext) -> [String] {
         let request: NSFetchRequest<FavoriteMO> = FavoriteMO.fetchRequest()
+        var result: [String] = []
         if let fetchedFavoriteIDs = try? context.fetch(request) {
-            var result: [String] = []
             for fetchedFavoriteID in fetchedFavoriteIDs {
                 guard let favorite = fetchedFavoriteID.spotID else { return [] }
                 result.append(favorite)
             }
-            return result
-        } else { return [] }
-    }
-
-    func saveToFavorite() {
-    }
-
-    func removeToFavorite() {
-    }
-}
-
-// MARK: - Errors
-
-enum SpotErrors: Error {
-    case failReadingSpotsMO
-    case failFetchingSpotsMO
-}
-
-extension SpotErrors: LocalizedError {
-    var errorDescription: String? {
-        switch self {
-        case .failReadingSpotsMO:
-            return NSLocalizedString("ERROR", comment: "")
-        case .failFetchingSpotsMO:
-            return NSLocalizedString("ERROR", comment: "")
         }
+        return result
     }
+
 }
