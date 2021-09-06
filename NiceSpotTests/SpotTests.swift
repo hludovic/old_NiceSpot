@@ -28,7 +28,7 @@ class SpotTests: XCTestCase {
         let date = TestableData.getDate(year: 1900, month: 01, day: 1)
         TestableData.saveFakeSpot(date: date, category: "blabla", municipality: "blabla")
         // When
-        let spots = Spot.getAll(context: viewContext)
+        let spots = Spot.getSpots(context: viewContext)
         // Then
         XCTAssertEqual(4, spots.count)
         XCTAssertEqual("NewSpot", spots.last?.title)
@@ -40,7 +40,7 @@ class SpotTests: XCTestCase {
         let date = TestableData.getDate(year: 2021, month: 01, day: 1)
         TestableData.saveFakeSpot(date: date, category: "blabla", municipality: "blabla")
         // When
-        let spots = Spot.getAll(context: viewContext)
+        let spots = Spot.getSpots(context: viewContext)
         // Then
         XCTAssertEqual(4, spots.count)
         XCTAssertEqual("NewSpot", spots.first?.title)
@@ -50,7 +50,7 @@ class SpotTests: XCTestCase {
         // Given
         TestableData.saveFakeSpot(date: Date(), category: "blabla", municipality: "blabla")
         // When
-        let spots = Spot.getAll(context: viewContext)
+        let spots = Spot.getSpots(context: viewContext)
         // Then
         XCTAssertEqual(1, spots.count)
         XCTAssertEqual(Spot.Category.unknown, spots.first?.category)
@@ -61,65 +61,65 @@ class SpotTests: XCTestCase {
 
     func testSpotsAreSaved_WhenSaveASpotsToFavorite_ThenSpotIsFavorite() {
         TestableData.saveFakeSpots()
-        let spots = Spot.getAll(context: viewContext)
+        let spots = Spot.getSpots(context: viewContext)
         XCTAssertEqual(3, spots.count)
         XCTAssertFalse(spots.first!.isFavorite(context: self.viewContext))
-        var favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        var favoriteSpots = Spot.getFavorites(context: self.viewContext)
         XCTAssertEqual(0, favoriteSpots.count)
         // When
         XCTAssertTrue(spots.first!.saveToFavorite(context: self.viewContext))
         XCTAssertTrue(spots.last!.saveToFavorite(context: self.viewContext))
         // Then
         XCTAssertTrue(spots.first!.isFavorite(context: self.viewContext))
-        favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        favoriteSpots = Spot.getFavorites(context: self.viewContext)
         XCTAssertEqual(2, favoriteSpots.count)
     }
 
     func testSpotsAreSaved_WhenSaveASpotTwiceToFavorite_ThenError() {
         TestableData.saveFakeSpots()
-        let spots = Spot.getAll(context: viewContext)
+        let spots = Spot.getSpots(context: viewContext)
         XCTAssertEqual(3, spots.count)
         XCTAssertFalse(spots.first!.isFavorite(context: self.viewContext))
-        var favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        var favoriteSpots = Spot.getFavorites(context: self.viewContext)
         XCTAssertEqual(0, favoriteSpots.count)
         // When
         XCTAssertTrue(spots.first!.saveToFavorite(context: self.viewContext))
         // Then
         XCTAssertFalse(spots.first!.saveToFavorite(context: self.viewContext))
-        favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        favoriteSpots = Spot.getFavorites(context: self.viewContext)
         XCTAssertEqual(1, favoriteSpots.count)
     }
 
     func testTwoSpotsSavedToFavorite_WhenRemoveOneToFavorite_ThenThereIsOneFavorite() {
         TestableData.saveFakeSpots()
-        let spots = Spot.getAll(context: viewContext)
+        let spots = Spot.getSpots(context: viewContext)
         XCTAssertEqual(3, spots.count)
         XCTAssertTrue(spots.first!.saveToFavorite(context: self.viewContext))
         XCTAssertTrue(spots.first!.isFavorite(context: self.viewContext))
         XCTAssertTrue(spots.last!.saveToFavorite(context: self.viewContext))
         XCTAssertTrue(spots.last!.isFavorite(context: self.viewContext))
-        var favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        var favoriteSpots = Spot.getFavorites(context: self.viewContext)
         XCTAssertEqual(2, favoriteSpots.count)
         // When
         XCTAssertTrue(spots.first!.removeToFavorite(context: self.viewContext))
         // Then
-        favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        favoriteSpots = Spot.getFavorites(context: self.viewContext)
         XCTAssertEqual(1, favoriteSpots.count)
     }
 
     func testSpotSavedToFavorite_WhenRemoveTwiceToFavorite_ThenError() {
         TestableData.saveFakeSpots()
-        let spots = Spot.getAll(context: viewContext)
+        let spots = Spot.getSpots(context: viewContext)
         XCTAssertEqual(3, spots.count)
         XCTAssertTrue(spots.first!.saveToFavorite(context: self.viewContext))
         XCTAssertTrue(spots.first!.isFavorite(context: self.viewContext))
-        var favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        var favoriteSpots = Spot.getFavorites(context: self.viewContext)
         XCTAssertEqual(1, favoriteSpots.count)
         // When
         XCTAssertTrue(spots.first!.removeToFavorite(context: self.viewContext))
         // Then
         XCTAssertFalse(spots.first!.removeToFavorite(context: self.viewContext))
-        favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
+        favoriteSpots = Spot.getFavorites(context: self.viewContext)
         XCTAssertEqual(0, favoriteSpots.count)
     }
 
@@ -127,9 +127,9 @@ class SpotTests: XCTestCase {
 
     func testSpotsSaved_WhenSearchAWordThatExistInTitles_ThenReturnSpots() {
         // Given
-        XCTAssertEqual(0, Spot.getAll(context: viewContext).count)
+        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
         TestableData.saveFakeSpots()
-        XCTAssertEqual(3, Spot.getAll(context: viewContext).count)
+        XCTAssertEqual(3, Spot.getSpots(context: viewContext).count)
         // When
         let result = Spot.searchSpots(context: viewContext, titleContains: "plage")
         // Then
@@ -140,9 +140,9 @@ class SpotTests: XCTestCase {
 
     func testSpotsSaved_WhenSearchAWordThatNOTExistInTitles_ThenReturnError() {
         // Given
-        XCTAssertEqual(0, Spot.getAll(context: viewContext).count)
+        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
         TestableData.saveFakeSpots()
-        XCTAssertEqual(3, Spot.getAll(context: viewContext).count)
+        XCTAssertEqual(3, Spot.getSpots(context: viewContext).count)
         // When
         let result = Spot.searchSpots(context: viewContext, titleContains: "route")
         // Then
@@ -151,9 +151,9 @@ class SpotTests: XCTestCase {
 
     func testSpotsSaved_WhenSearchEmptyWord_ThenReturnError() {
         // Given
-        XCTAssertEqual(0, Spot.getAll(context: viewContext).count)
+        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
         TestableData.saveFakeSpots()
-        XCTAssertEqual(3, Spot.getAll(context: viewContext).count)
+        XCTAssertEqual(3, Spot.getSpots(context: viewContext).count)
         // When
         let result1 = Spot.searchSpots(context: viewContext, titleContains: " ")
         let result2 = Spot.searchSpots(context: viewContext, titleContains: "")
@@ -164,7 +164,7 @@ class SpotTests: XCTestCase {
 
     func testNoSpotsSaved_WhenSearchWord_ThenReturnError() {
         // Given
-        XCTAssertEqual(0, Spot.getAll(context: viewContext).count)
+        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
         // When
         let result = Spot.searchSpots(context: viewContext, titleContains: "plage")
         // Then

@@ -43,7 +43,7 @@ class Spot {
         return false
     }
 
-    static func getAll(context: NSManagedObjectContext = viewContext) -> [Spot] {
+    static func getSpots(context: NSManagedObjectContext = viewContext) -> [Spot] {
         let request: NSFetchRequest<SpotMO> = SpotMO.fetchRequest()
         let sort = NSSortDescriptor(key: "creationDate", ascending: false)
         request.sortDescriptors = [sort]
@@ -56,7 +56,7 @@ class Spot {
         return result
     }
 
-    static func getAllFavorite(context: NSManagedObjectContext = viewContext) -> [Spot] {
+    static func getFavorites(context: NSManagedObjectContext = viewContext) -> [Spot] {
         let favoriteIDs = getFavoriteIDs(context: context)
         guard favoriteIDs.count > 0 else { return [] }
         var result: [Spot] = []
