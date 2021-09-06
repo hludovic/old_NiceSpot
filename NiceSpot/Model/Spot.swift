@@ -81,10 +81,11 @@ class Spot {
         return result
     }
 
-    func saveToFavorite(context: NSManagedObjectContext = viewContext) -> Bool {
+    func saveToFavorite(context: NSManagedObjectContext = viewContext, date: Date = Date()) -> Bool {
         guard !isFavorite(context: context) else { return false }
         let favoriteMO = FavoriteMO(context: context)
         favoriteMO.spotID = self.recordID
+        favoriteMO.dateStarred = date
         do {
             try context.save()
         } catch {
@@ -154,6 +155,8 @@ private extension Spot {
 
     static func getFavoriteIDs(context: NSManagedObjectContext = viewContext) -> [String] {
         let request: NSFetchRequest<FavoriteMO> = FavoriteMO.fetchRequest()
+        let sort = NSSortDescriptor(key: "dateStarred", ascending: true)
+        request.sortDescriptors = [sort]
         var result: [String] = []
         if let fetchedFavoriteIDs = try? context.fetch(request) {
             for fetchedFavoriteID in fetchedFavoriteIDs {

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		430788242694A6560089DF53 /* Spot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430788232694A6560089DF53 /* Spot.swift */; };
+		43144CDE26E6A54700B0963F /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43144CDD26E6A54700B0963F /* User.swift */; };
 		4347D04F26922428001E59A7 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4347D04E26922428001E59A7 /* Persistence.swift */; };
 		4354C3802694D4E000AD29D1 /* TestableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4354C37F2694D4E000AD29D1 /* TestableData.swift */; };
 		4354C3842694D59800AD29D1 /* SpotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4354C3832694D59800AD29D1 /* SpotTests.swift */; };
@@ -33,6 +34,7 @@
 
 /* Begin PBXFileReference section */
 		430788232694A6560089DF53 /* Spot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spot.swift; sourceTree = "<group>"; };
+		43144CDD26E6A54700B0963F /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		4347D04E26922428001E59A7 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		4354C3752694D49900AD29D1 /* NiceSpotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NiceSpotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4354C3792694D49900AD29D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				4387F1A62690195900F6355D /* NiceSpot.xcdatamodeld */,
 				430788232694A6560089DF53 /* Spot.swift */,
 				435D0B132694F0A400247151 /* Spot+Extensions.swift */,
+				43144CDD26E6A54700B0963F /* User.swift */,
 				4347D04E26922428001E59A7 /* Persistence.swift */,
 			);
 			path = Model;
@@ -282,6 +285,7 @@
 				4387F18C269011FF00F6355D /* AppDelegate.swift in Sources */,
 				430788242694A6560089DF53 /* Spot.swift in Sources */,
 				4387F1A82690195900F6355D /* NiceSpot.xcdatamodeld in Sources */,
+				43144CDE26E6A54700B0963F /* User.swift in Sources */,
 				4387F18E269011FF00F6355D /* SceneDelegate.swift in Sources */,
 				4347D04F26922428001E59A7 /* Persistence.swift in Sources */,
 				435D0B142694F0A400247151 /* Spot+Extensions.swift in Sources */,

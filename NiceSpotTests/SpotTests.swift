@@ -123,6 +123,19 @@ class SpotTests: XCTestCase {
         XCTAssertEqual(0, favoriteSpots.count)
     }
 
+    func testOldSpotSavedToFavorite_WhenGetFavorites_ThenDisplayFavoritesOrderedByDate() {
+        TestableData.saveFakeSpots()
+        let date = TestableData.getDate(year: 1900, month: 01, day: 1)
+        let spots = Spot.getSpots(context: viewContext)
+        XCTAssertTrue(spots[0].saveToFavorite(context: viewContext))
+        XCTAssertTrue(spots[1].saveToFavorite(context: viewContext, date: date))
+        XCTAssertEqual(spots[1].title, "La Plage de la Caravelle")
+        XCTAssertTrue(spots[2].saveToFavorite(context: viewContext))
+        // When
+        let favorites = Spot.getFavorites(context: viewContext)
+        XCTAssertEqual(favorites[0].title, "La Plage de la Caravelle")
+    }
+
     // MARK: - Search
 
     func testSpotsSaved_WhenSearchAWordThatExistInTitles_ThenReturnSpots() {
