@@ -67,8 +67,19 @@ class Spot {
         return result
     }
 
-//    func searchSpots() {
-//    }
+    static func searchSpots(context: NSManagedObjectContext, titleContains: String) -> [Spot] {
+        guard (titleContains != "") && (titleContains != " ") else {return [] }
+        let request: NSFetchRequest<SpotMO> = SpotMO.fetchRequest()
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", titleContains)
+        request.predicate = predicate
+        guard  let fetchedSpots = try? context.fetch(request) else { return [] }
+        var result: [Spot] = []
+        for fetchedSpot in fetchedSpots {
+            guard let resultItem = managedObjectToSpot(fetchedSpot) else { return [] }
+            result.append(resultItem)
+        }
+        return result
+    }
 
     func saveToFavorite(context: NSManagedObjectContext = viewContext) -> Bool {
         guard !isFavorite(context: context) else { return false }
@@ -94,6 +105,8 @@ class Spot {
         return true
     }
 }
+
+// MARK: - Private Methods
 
 private extension Spot {
 

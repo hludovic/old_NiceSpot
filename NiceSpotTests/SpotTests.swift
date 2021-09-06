@@ -22,7 +22,7 @@ class SpotTests: XCTestCase {
         super.tearDown()
     }
 
-    func testSavedAnOldSpot_WenGetAllSpots_TheNewSpotSavedOnLast() {
+    func testOldSpotSaved_WenGetAllSpots_TheNewSpotSavedOnLast() {
         // Given
         TestableData.saveFakeSpots()
         let date = TestableData.getDate(year: 1900, month: 01, day: 1)
@@ -122,4 +122,53 @@ class SpotTests: XCTestCase {
         favoriteSpots = Spot.getAllFavorite(context: self.viewContext)
         XCTAssertEqual(0, favoriteSpots.count)
     }
+
+    // MARK: - Search
+
+    func testSpotsSaved_WhenSearchAWordThatExistInTitles_ThenReturnSpots() {
+        // Given
+        XCTAssertEqual(0, Spot.getAll(context: viewContext).count)
+        TestableData.saveFakeSpots()
+        XCTAssertEqual(3, Spot.getAll(context: viewContext).count)
+        // When
+        let result = Spot.searchSpots(context: viewContext, titleContains: "plage")
+        // Then
+        XCTAssertEqual(result.count, 2)
+        let title1 = result.first!.title
+        XCTAssertTrue(title1.localizedCaseInsensitiveContains("plage"))
+    }
+
+    func testSpotsSaved_WhenSearchAWordThatNOTExistInTitles_ThenReturnError() {
+        // Given
+        XCTAssertEqual(0, Spot.getAll(context: viewContext).count)
+        TestableData.saveFakeSpots()
+        XCTAssertEqual(3, Spot.getAll(context: viewContext).count)
+        // When
+        let result = Spot.searchSpots(context: viewContext, titleContains: "route")
+        // Then
+        XCTAssertEqual(result.count, 0)
+    }
+
+    func testSpotsSaved_WhenSearchEmptyWord_ThenReturnError() {
+        // Given
+        XCTAssertEqual(0, Spot.getAll(context: viewContext).count)
+        TestableData.saveFakeSpots()
+        XCTAssertEqual(3, Spot.getAll(context: viewContext).count)
+        // When
+        let result1 = Spot.searchSpots(context: viewContext, titleContains: " ")
+        let result2 = Spot.searchSpots(context: viewContext, titleContains: "")
+        // Then
+        XCTAssertEqual(result1.count, 0)
+        XCTAssertEqual(result2.count, 0)
+    }
+
+    func testNoSpotsSaved_WhenSearchWord_ThenReturnError() {
+        // Given
+        XCTAssertEqual(0, Spot.getAll(context: viewContext).count)
+        // When
+        let result = Spot.searchSpots(context: viewContext, titleContains: "plage")
+        // Then
+        XCTAssertEqual(result.count, 0)
+    }
+
 }

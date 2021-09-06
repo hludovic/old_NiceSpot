@@ -11,7 +11,7 @@ import Foundation
 
 extension Spot {
 
-    /// The list of categories in which a spot can be placed.
+    // The list of categories in which a spot can be placed.
     enum Category: String, CaseIterable {
         case unknown = "Unknown"
         case beach = "Beach"
@@ -20,7 +20,7 @@ extension Spot {
         case waterfall = "Waterfall"
     }
 
-    /// The list of municipalities in which a spot can be found.
+    // The list of municipalities in which a spot can be found.
     enum Municipality: String, CaseIterable {
         case unknown = "Unknown"
         case basseTerre = "Basse-Terre"
@@ -57,7 +57,7 @@ extension Spot {
         case vieuxHabitants = "Vieux-Habitants"
     }
 }
-
+/*
 // MARK: - Errors
 
 enum SpotError: Error {
@@ -78,3 +78,4 @@ extension SpotError: LocalizedError {
         }
     }
 }
+*/
