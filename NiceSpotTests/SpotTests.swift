@@ -187,10 +187,13 @@ class SpotTests: XCTestCase {
     // MARK: - Cloudkit
 
     func testCloudKit() {
+        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
         let expextation = XCTestExpectation(description: "Fetching Spots")
         Spot.fetchSpots { spots in
             print("->>> \(spots.count)")
-            print("⭕️ \(spots.first!.title) - \(spots.first!.creationDate.description)")
+            print("⭕️ \(spots.first!.title) - \(spots.first!.recordChangeTag)")
+            print(" --- \(spots.first!.saveSpot(context: self.viewContext))")
+            XCTAssertEqual(1, Spot.getSpots(context: self.viewContext).count)
             expextation.fulfill()
         }
         wait(for: [expextation], timeout: 10.0)

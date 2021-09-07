@@ -18,11 +18,20 @@ class Spot {
     let latitude: Double
     let pictureName: String
     let municipality: Spot.Municipality
+    let recordChangeTag: String
     private static let viewContext = PersistenceController.shared.container.viewContext
 
-    private init(id: String, date: Date, title: String, category: Spot.Category,
-                 detail: String, longitude: Double, latitude: Double,
-                 picture: String, municipality: Spot.Municipality) {
+    private init(id: String,
+                 date: Date,
+                 title: String,
+                 category: Spot.Category,
+                 detail: String,
+                 longitude: Double,
+                 latitude: Double,
+                 picture: String,
+                 municipality: Spot.Municipality,
+                 sha: String
+    ) {
         self.recordID = id
         self.creationDate = date
         self.title = title
@@ -32,6 +41,7 @@ class Spot {
         self.latitude = latitude
         self.pictureName = picture
         self.municipality = municipality
+        self.recordChangeTag = sha
     }
 
     func isFavorite(context: NSManagedObjectContext = viewContext) -> Bool {
@@ -119,7 +129,8 @@ private extension Spot {
             let detail = spotMO.detail,
             let categoryString = spotMO.category,
             let pictureName = spotMO.pictureName,
-            let municipalityString = spotMO.municipality
+            let municipalityString = spotMO.municipality,
+            let recordChangeTag = spotMO.recordChangeTag
         else { return nil }
         let spot = Spot(id: spotID,
                         date: date,
@@ -129,7 +140,8 @@ private extension Spot {
                         longitude: spotMO.longitude,
                         latitude: spotMO.latitude,
                         picture: pictureName,
-                        municipality: Spot.Municipality(rawValue: municipalityString) ?? .unknown
+                        municipality: Spot.Municipality(rawValue: municipalityString) ?? .unknown,
+                        sha: recordChangeTag
         )
         return spot
     }
@@ -184,6 +196,7 @@ extension Spot {
                 let date = record.creationDate,
                 let title = record["title"] as? String,
                 let detail = record["detail"] as? String,
+                let recordChangeTag = record.recordChangeTag,
                 let category = record["category"] as? String,
                 let location = record["location"] as? CLLocation,
                 let pictureName = record["pictureName"] as? String,
@@ -197,7 +210,8 @@ extension Spot {
                               longitude: location.coordinate.longitude,
                               latitude: location.coordinate.latitude,
                               picture: pictureName,
-                              municipality: Spot.Municipality(rawValue: municipality) ?? .unknown
+                              municipality: Spot.Municipality(rawValue: municipality) ?? .unknown,
+                              sha: recordChangeTag
             )
             newSpotsCK.append(spotFetched)
         }
@@ -207,4 +221,26 @@ extension Spot {
         }
         PersistenceController.publicCKDB.add(operation)
     }
+
+    func saveSpot(context: NSManagedObjectContext = viewContext) -> Bool {
+        let spotMO = SpotMO(context: context)
+        spotMO.recordID = self.recordID
+        spotMO.creationDate = self.creationDate
+        spotMO.title = self.title
+        spotMO.detail = self.detail
+        spotMO.longitude = self.longitude
+        spotMO.latitude = self.latitude
+        spotMO.category = self.category.rawValue
+        spotMO.municipality = self.municipality.rawValue
+        spotMO.pictureName = self.pictureName
+        spotMO.recordChangeTag = self.recordChangeTag
+        do {
+            try context.save()
+        } catch {
+            return false
+        }
+        print("OKER")
+        return true
+    }
+
 }

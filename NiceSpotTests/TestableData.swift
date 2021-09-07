@@ -64,6 +64,7 @@ class TestableData {
         spot.pictureName = "newSpot"
         spot.title = "NewSpot"
         spot.creationDate = date
+        spot.recordChangeTag = "AAAV"
         
         do {
             try context.save()
@@ -93,7 +94,10 @@ Un chemin ombragé par une végétation luxuriante, entièrement balisé le long
         cascecr.pictureName = "cascecr"
         cascecr.title = "La Cascade aux Ecrevisses"
         cascecr.creationDate = TestableData.getDate(year: 2020, month: 06, day: 01)
+        cascecr.recordChangeTag = "AAA11"
+
         // -- La Plage de l’Anse Rifflet --
+
         let rifflet = SpotMO(context: context)
         rifflet.category = Spot.Category.beach.rawValue
         rifflet.detail = """
@@ -110,6 +114,7 @@ La plage de l’Anse Rifflet appelle au farniente et à la contemplation. Imposs
         rifflet.pictureName = "rifflet"
         rifflet.title = "La Plage de l’Anse Rifflet"
         rifflet.creationDate = TestableData.getDate(year: 2020, month: 01, day: 01)
+        rifflet.recordChangeTag = "BBB22"
 
         // -- La Plage de la Caravelle --
         
@@ -125,6 +130,7 @@ Assurément une des plus belles plages en Guadeloupe ! La plage de la Caravelle,
         caravelle.pictureName = "caravelle"
         caravelle.title = "La Plage de la Caravelle"
         caravelle.creationDate = TestableData.getDate(year: 2020, month: 03, day: 01)
+        caravelle.recordChangeTag = "CCC33"
 
         do {
             try context.save()
