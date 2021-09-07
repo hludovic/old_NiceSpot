@@ -10,15 +10,15 @@ import CloudKit
 
 class PersistenceController {
 
-//    // MARK: - CloudKit Static Property
-//
-//    static let publicCKDB: CKDatabase = CKContainer(identifier: "iCloud.fr.hludovic.container1").publicCloudDatabase
-//
-//    static var isICloudAvailable: Bool {
-//        if FileManager.default.ubiquityIdentityToken != nil {
-//            return true
-//        } else { return false }
-//    }
+    // MARK: - CloudKit Static Property
+
+    static let publicCKDB: CKDatabase = CKContainer(identifier: "iCloud.fr.hludovic.container1").publicCloudDatabase
+
+    static var isICloudAvailable: Bool {
+        if FileManager.default.ubiquityIdentityToken != nil {
+            return true
+        } else { return false }
+    }
 
     // MARK: - CoreData Static Property
 

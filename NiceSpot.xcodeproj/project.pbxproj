@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		430788242694A6560089DF53 /* Spot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430788232694A6560089DF53 /* Spot.swift */; };
-		43144CDE26E6A54700B0963F /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43144CDD26E6A54700B0963F /* User.swift */; };
+		43400CE226E70F3C008CE2A4 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43400CE126E70F3C008CE2A4 /* CloudKit.framework */; };
 		4347D04F26922428001E59A7 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4347D04E26922428001E59A7 /* Persistence.swift */; };
 		4354C3802694D4E000AD29D1 /* TestableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4354C37F2694D4E000AD29D1 /* TestableData.swift */; };
 		4354C3842694D59800AD29D1 /* SpotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4354C3832694D59800AD29D1 /* SpotTests.swift */; };
@@ -34,7 +34,8 @@
 
 /* Begin PBXFileReference section */
 		430788232694A6560089DF53 /* Spot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spot.swift; sourceTree = "<group>"; };
-		43144CDD26E6A54700B0963F /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		43400CDF26E70F38008CE2A4 /* NiceSpot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NiceSpot.entitlements; sourceTree = "<group>"; };
+		43400CE126E70F3C008CE2A4 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		4347D04E26922428001E59A7 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		4354C3752694D49900AD29D1 /* NiceSpotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NiceSpotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4354C3792694D49900AD29D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -65,12 +66,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43400CE226E70F3C008CE2A4 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		43400CE026E70F3C008CE2A4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				43400CE126E70F3C008CE2A4 /* CloudKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		4354C3762694D49900AD29D1 /* NiceSpotTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -88,6 +98,7 @@
 				4387F18A269011FF00F6355D /* NiceSpot */,
 				4354C3762694D49900AD29D1 /* NiceSpotTests */,
 				4387F189269011FF00F6355D /* Products */,
+				43400CE026E70F3C008CE2A4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -103,6 +114,7 @@
 		4387F18A269011FF00F6355D /* NiceSpot */ = {
 			isa = PBXGroup;
 			children = (
+				43400CDF26E70F38008CE2A4 /* NiceSpot.entitlements */,
 				4387F1A4269018ED00F6355D /* View */,
 				4387F1A3269018E700F6355D /* ViewModel */,
 				4387F1A52690190900F6355D /* Model */,
@@ -145,7 +157,6 @@
 				4387F1A62690195900F6355D /* NiceSpot.xcdatamodeld */,
 				430788232694A6560089DF53 /* Spot.swift */,
 				435D0B132694F0A400247151 /* Spot+Extensions.swift */,
-				43144CDD26E6A54700B0963F /* User.swift */,
 				4347D04E26922428001E59A7 /* Persistence.swift */,
 			);
 			path = Model;
@@ -285,7 +296,6 @@
 				4387F18C269011FF00F6355D /* AppDelegate.swift in Sources */,
 				430788242694A6560089DF53 /* Spot.swift in Sources */,
 				4387F1A82690195900F6355D /* NiceSpot.xcdatamodeld in Sources */,
-				43144CDE26E6A54700B0963F /* User.swift in Sources */,
 				4387F18E269011FF00F6355D /* SceneDelegate.swift in Sources */,
 				4347D04F26922428001E59A7 /* Persistence.swift in Sources */,
 				435D0B142694F0A400247151 /* Spot+Extensions.swift in Sources */,
@@ -483,6 +493,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NiceSpot/NiceSpot.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = W8A2PVHCN3;
 				INFOPLIST_FILE = "NiceSpot/Supporting files/Info.plist";
@@ -502,6 +513,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NiceSpot/NiceSpot.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = W8A2PVHCN3;
 				INFOPLIST_FILE = "NiceSpot/Supporting files/Info.plist";

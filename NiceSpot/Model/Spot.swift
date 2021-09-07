@@ -107,7 +107,7 @@ class Spot {
     }
 }
 
-// MARK: - Private Methods
+// MARK: - Private Methods CoreData
 
 private extension Spot {
 
@@ -167,4 +167,44 @@ private extension Spot {
         return result
     }
 
+}
+
+// MARK: - Private Methods CloudKit
+
+extension Spot {
+
+    static func fetchSpots(completion: @escaping ([Spot]) -> Void) {
+        let predicate = NSPredicate(value: true)
+        let querry = CKQuery(recordType: "SpotCK", predicate: predicate)
+        let operation = CKQueryOperation(query: querry)
+        operation.desiredKeys = ["title", "detail", "category", "location", "municipality", "pictureName"]
+        var newSpotsCK: [Spot] = []
+        operation.recordFetchedBlock = { record in
+            guard
+                let date = record.creationDate,
+                let title = record["title"] as? String,
+                let detail = record["detail"] as? String,
+                let category = record["category"] as? String,
+                let location = record["location"] as? CLLocation,
+                let pictureName = record["pictureName"] as? String,
+                let municipality = record["municipality"] as? String
+            else { return completion([]) }
+            let spotFetched = Spot(id: record.recordID.recordName,
+                              date: date,
+                              title: title,
+                              category: Spot.Category(rawValue: category) ?? .unknown,
+                              detail: detail,
+                              longitude: location.coordinate.longitude,
+                              latitude: location.coordinate.latitude,
+                              picture: pictureName,
+                              municipality: Spot.Municipality(rawValue: municipality) ?? .unknown
+            )
+            newSpotsCK.append(spotFetched)
+        }
+        operation.queryCompletionBlock = { (_, error) in
+            guard error == nil else { return completion([]) }
+            completion(newSpotsCK)
+        }
+        PersistenceController.publicCKDB.add(operation)
+    }
 }
