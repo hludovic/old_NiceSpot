@@ -239,7 +239,6 @@ extension Spot {
         } catch {
             return false
         }
-        print("OKER")
         return true
     }
 

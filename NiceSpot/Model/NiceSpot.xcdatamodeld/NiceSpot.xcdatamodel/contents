@@ -15,6 +15,11 @@
         <attribute name="recordChangeTag" attributeType="String"/>
         <attribute name="recordID" attributeType="String"/>
         <attribute name="title" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="recordChangeTag"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <elements>
         <element name="Favorite" positionX="-63" positionY="54" width="128" height="59"/>

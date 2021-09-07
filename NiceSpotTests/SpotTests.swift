@@ -188,15 +188,34 @@ class SpotTests: XCTestCase {
 
     func testCloudKit() {
         XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
-        let expextation = XCTestExpectation(description: "Fetching Spots")
+        let expectation = XCTestExpectation(description: "Fetching Spots")
         Spot.fetchSpots { spots in
             print("->>> \(spots.count)")
             print("⭕️ \(spots.first!.title) - \(spots.first!.recordChangeTag)")
             print(" --- \(spots.first!.saveSpot(context: self.viewContext))")
             XCTAssertEqual(1, Spot.getSpots(context: self.viewContext).count)
-            expextation.fulfill()
+            expectation.fulfill()
         }
-        wait(for: [expextation], timeout: 10.0)
+        wait(for: [expectation], timeout: 10.0)
+    }
+
+    func testMerging() {
+        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
+        let expectation = XCTestExpectation(description: "Fetch Spots")
+        Spot.fetchSpots { fetchedSpots in
+            for spot in fetchedSpots {
+                XCTAssertTrue(spot.saveSpot(context: self.viewContext))
+            }
+            print("⭕️ \(fetchedSpots.first!.title) - \(fetchedSpots.first!.recordChangeTag)")
+            for spot in fetchedSpots {
+                XCTAssertTrue(spot.saveSpot(context: self.viewContext))
+            }
+
+            XCTAssertEqual(10, Spot.getSpots(context: self.viewContext).count)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+
     }
 
 }
