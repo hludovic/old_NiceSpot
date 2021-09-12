@@ -73,6 +73,29 @@ class TestableData {
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
     }
+    
+    static func saveFakeSpot(title: String, sha: String) {
+        let context = PersistenceController.tests.container.viewContext
+        let spot = SpotMO(context: context)
+        spot.category = Spot.Category.waterfall.rawValue
+        spot.detail = "Detail Spot Detail Spot Detail"
+        spot.recordID = "1D997030-81B2-1111-4F62-87EAAD8EE7B3"
+        spot.latitude = 11111.112
+        spot.longitude = -111111.221
+        spot.municipality = Spot.Municipality.lamentin.rawValue
+        spot.pictureName = "newSpot"
+        spot.title = title
+        spot.creationDate = Date()
+        spot.recordChangeTag = sha
+        
+        do {
+            try context.save()
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
+    }
+
 
     // MARK: - Save tree spots
 
@@ -91,10 +114,10 @@ Un chemin ombragé par une végétation luxuriante, entièrement balisé le long
         cascecr.latitude = 16.179118967390906
         cascecr.longitude = -61.68083214438678
         cascecr.municipality = Spot.Municipality.petitBourg.rawValue
-        cascecr.pictureName = "cascecr"
-        cascecr.title = "La Cascade aux Ecrevisses"
+        cascecr.pictureName = "cascecr_1_GqbzwSMC4"
+        cascecr.title = "La Cascade aux Ecrevisses New"
         cascecr.creationDate = TestableData.getDate(year: 2020, month: 06, day: 01)
-        cascecr.recordChangeTag = "AAA11"
+        cascecr.recordChangeTag = "kkyd889w"
 
         // -- La Plage de l’Anse Rifflet --
 
@@ -112,7 +135,7 @@ La plage de l’Anse Rifflet appelle au farniente et à la contemplation. Imposs
         rifflet.longitude = -61.785863
         rifflet.municipality = Spot.Municipality.deshaies.rawValue
         rifflet.pictureName = "rifflet"
-        rifflet.title = "La Plage de l’Anse Rifflet"
+        rifflet.title = "La Plage de l’Anse Rifflet New"
         rifflet.creationDate = TestableData.getDate(year: 2020, month: 01, day: 01)
         rifflet.recordChangeTag = "BBB22"
 
@@ -128,7 +151,7 @@ Assurément une des plus belles plages en Guadeloupe ! La plage de la Caravelle,
         caravelle.longitude = -61.39367191555051
         caravelle.municipality = Spot.Municipality.sainteAnne.rawValue
         caravelle.pictureName = "caravelle"
-        caravelle.title = "La Plage de la Caravelle"
+        caravelle.title = "La Plage de la Caravelle New"
         caravelle.creationDate = TestableData.getDate(year: 2020, month: 03, day: 01)
         caravelle.recordChangeTag = "CCC33"
 

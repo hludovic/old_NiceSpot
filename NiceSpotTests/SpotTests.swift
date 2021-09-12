@@ -129,11 +129,11 @@ class SpotTests: XCTestCase {
         let spots = Spot.getSpots(context: viewContext)
         XCTAssertTrue(spots[0].saveToFavorite(context: viewContext))
         XCTAssertTrue(spots[1].saveToFavorite(context: viewContext, date: date))
-        XCTAssertEqual(spots[1].title, "La Plage de la Caravelle")
+        XCTAssertEqual(spots[1].title, "La Plage de la Caravelle New")
         XCTAssertTrue(spots[2].saveToFavorite(context: viewContext))
         // When
         let favorites = Spot.getFavorites(context: viewContext)
-        XCTAssertEqual(favorites[0].title, "La Plage de la Caravelle")
+        XCTAssertEqual(favorites[0].title, "La Plage de la Caravelle New")
     }
 
     // MARK: - Search
@@ -184,15 +184,22 @@ class SpotTests: XCTestCase {
         XCTAssertEqual(result.count, 0)
     }
 
+    // MARK: - Save
+
+    func testSpotsAreSaved_WhenSaveItAgain_ThenItIsMerged() {
+        TestableData.saveFakeSpots()
+        XCTAssertEqual(3, Spot.getSpots(context: viewContext).count)
+    }
+
     // MARK: - Cloudkit
 
     func testCloudKit() {
         XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
         let expectation = XCTestExpectation(description: "Fetching Spots")
         Spot.fetchSpots { spots in
-            print("->>> \(spots.count)")
-            print("⭕️ \(spots.first!.title) - \(spots.first!.recordChangeTag)")
-            print(" --- \(spots.first!.saveSpot(context: self.viewContext))")
+            spots.first!.saveSpot(context: self.viewContext) { success in
+                XCTAssertTrue(success)
+            }
             XCTAssertEqual(1, Spot.getSpots(context: self.viewContext).count)
             expectation.fulfill()
         }
@@ -204,18 +211,46 @@ class SpotTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Fetch Spots")
         Spot.fetchSpots { fetchedSpots in
             for spot in fetchedSpots {
-                XCTAssertTrue(spot.saveSpot(context: self.viewContext))
+                spot.saveSpot(context: self.viewContext) { saved in
+                    XCTAssertTrue(saved)
+                }
             }
             print("⭕️ \(fetchedSpots.first!.title) - \(fetchedSpots.first!.recordChangeTag)")
             for spot in fetchedSpots {
-                XCTAssertTrue(spot.saveSpot(context: self.viewContext))
+                spot.saveSpot(context: self.viewContext) { saved in
+                    XCTAssertTrue(saved)
+                }
             }
-
             XCTAssertEqual(10, Spot.getSpots(context: self.viewContext).count)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10.0)
+    }
 
+    func testRefreshSpots() {
+        XCTAssertEqual(Spot.getSpots(context: viewContext).count, 0)
+        let expectation = XCTestExpectation(description: "Refresh Spots")
+        Spot.refreshSpots(context: viewContext) { success in
+//            print(Spot.getSpots(context: self.viewContext)[7].title)
+            print("-----")
+            var spots = Spot.getSpots(context: self.viewContext)
+            for spot in spots {
+                print(spot.title)
+            }
+            print("-----")
+            XCTAssertTrue(success)
+            TestableData.saveFakeSpots()
+//            print(Spot.getSpots(context: self.viewContext)[9].title)
+            print("-----")
+            spots = Spot.getSpots(context: self.viewContext)
+            for spot in spots {
+                print(spot.title)
+            }
+            print("-----")
+            XCTAssertEqual(Spot.getSpots(context: self.viewContext).count, 12)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
     }
 
 }
