@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreData
+import CloudKit
 
 class Spot {
     let recordID: String
