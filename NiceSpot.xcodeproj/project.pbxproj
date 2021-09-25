@@ -137,7 +137,6 @@
 		4387F1A3269018E700F6355D /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				4387F18F269011FF00F6355D /* ViewController.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -145,6 +144,7 @@
 		4387F1A4269018ED00F6355D /* View */ = {
 			isa = PBXGroup;
 			children = (
+				4387F18F269011FF00F6355D /* ViewController.swift */,
 				4387F191269011FF00F6355D /* Main.storyboard */,
 				4387F1962690120000F6355D /* LaunchScreen.storyboard */,
 			);
