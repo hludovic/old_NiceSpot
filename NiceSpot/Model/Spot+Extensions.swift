@@ -57,25 +57,24 @@ extension Spot {
         case vieuxHabitants = "Vieux-Habitants"
     }
 }
-/*
+
 // MARK: - Errors
 
 enum SpotError: Error {
-    case failReadingSpotsMO
-    case failFetchingSpotsMO
-    case failSavingFavoriteMO
+    case failReadingSpotCK
+    case failSaveSpot
+    case noSpotsToSave
 }
 
 extension SpotError: LocalizedError {
     var errorDescription: String? {
         switch self {
-        case .failReadingSpotsMO:
-            return NSLocalizedString("ERROR", comment: "")
-        case .failFetchingSpotsMO:
-            return NSLocalizedString("ERROR", comment: "")
-        case .failSavingFavoriteMO:
-            return NSLocalizedString("ERROR", comment: "")
+        case .failReadingSpotCK:
+            return NSLocalizedString("Error reading a spot fetched", comment: "")
+        case .noSpotsToSave:
+            return NSLocalizedString("Fail SaveSpots, passing empty spots to save", comment: "")
+        case .failSaveSpot:
+            return NSLocalizedString("Fail saving a spot", comment: "")
         }
     }
 }
-*/

@@ -12,13 +12,23 @@ import CoreData
 class SpotTests: XCTestCase {
     var viewContext: NSManagedObjectContext!
 
+    override class func setUp() {
+        let expectation = XCTestExpectation(description: "Wait 2 seconds before starting tests")
+        _ = XCTWaiter.wait(for: [expectation], timeout: 2.0)
+        super.setUp()
+    }
+
     override func setUp() {
         super.setUp()
         self.viewContext = PersistenceController.tests.container.viewContext
     }
 
     override func tearDown() {
-        TestableData.clearData()
+        let expectation = XCTestExpectation(description: "Clear Data")
+        TestableData.clearData { _ in
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
         super.tearDown()
     }
 
@@ -196,17 +206,10 @@ class SpotTests: XCTestCase {
     func testRefreshSpots() {
         XCTAssertEqual(Spot.getSpots(context: viewContext).count, 0)
         let expectation = XCTestExpectation(description: "Refresh Spots")
-        Spot.refreshSpots(context: viewContext) { success in
+        Spot.refreshSpots(context: viewContext) { success, error in
             XCTAssertTrue(success)
+            XCTAssertNil(error)
             XCTAssertEqual(Spot.getSpots(context: self.viewContext).count, 9)
-            let secondExpectation = XCTestExpectation(description: "Second refresh Spots")
-            Spot.refreshSpots(context: self.viewContext) { secondRefreshSuccess in
-                XCTAssertTrue(secondRefreshSuccess)
-                XCTAssertEqual(Spot.getSpots(context: self.viewContext).count, 9)
-                secondExpectation.fulfill()
-
-            }
-            self.wait(for: [secondExpectation], timeout: 10.0)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10.0)

@@ -26,28 +26,42 @@ class TestableData {
     
     // MARK: - Clear all spots saved
 
-    static func clearData() {
-        clearSpots()
-        clearFavorites()
+    static func clearData(completion: @escaping (Bool) -> Void) {
+        clearSpots { clearedSpots in
+            guard clearedSpots else { return completion(false) }
+            clearFavorites { clearedFavodites in
+                guard clearedFavodites else { return completion(false) }
+                return completion(true)
+            }
+        }
     }
     
-    private static func clearSpots() {
+    private static func clearSpots(completion: @escaping (Bool) -> Void) {
         let fetchRequest: NSFetchRequest<SpotMO> = SpotMO.fetchRequest()
         let objs = try! PersistenceController.tests.container.viewContext.fetch(fetchRequest)
         for case let obj as NSManagedObject in objs {
             PersistenceController.tests.container.viewContext.delete(obj)
         }
-        try! PersistenceController.tests.container.viewContext.save()
+        do {
+            try PersistenceController.tests.container.viewContext.save()
+        } catch {
+            return completion(false)
+        }
+        return completion(true)
     }
 
-    private static func clearFavorites() {
+    private static func clearFavorites(completion: @escaping (Bool) -> Void) {
         let fetchRequest: NSFetchRequest<FavoriteMO> = FavoriteMO.fetchRequest()
         let objs = try! PersistenceController.tests.container.viewContext.fetch(fetchRequest)
         for case let obj as NSManagedObject in objs {
             PersistenceController.tests.container.viewContext.delete(obj)
         }
-        try! PersistenceController.tests.container.viewContext.save()
-
+        do {
+            try PersistenceController.tests.container.viewContext.save()
+        } catch {
+            return completion(false)
+        }
+        return completion(true)
     }
 
     // MARK: - Save a spot with a personalized content

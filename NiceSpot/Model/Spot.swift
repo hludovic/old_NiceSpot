@@ -117,13 +117,18 @@ class Spot {
         return true
     }
 
-    static func refreshSpots(context: NSManagedObjectContext = viewContext, success: @escaping (Bool) -> Void) {
-        Spot.fetchSpots { fetchedSpots in
-            guard fetchedSpots.count > 0 else { return success(false) }
-            Spot.saveSpots(context: context, spots: fetchedSpots) { saved in
-                guard saved else { return success(false) }
+    static func refreshSpots(context: NSManagedObjectContext = viewContext, completion: @escaping (Bool, Error?) -> Void) {
+        Spot.fetchSpots { result in
+            switch result {
+            case .failure(let error):
+                completion(false, error)
+            case .success(let spots):
+                Spot.saveSpots(context: context, spots: spots) { success, error in
+                    guard !success else { return completion(true, nil) }
+                    guard let error = error else { return completion(false, nil) }
+                    return completion(false, error)
+                }
             }
-            return success(true)
         }
     }
 
@@ -197,54 +202,64 @@ private extension Spot {
 
 private extension Spot {
 
-    static func fetchSpots(completion: @escaping ([Spot]) -> Void) {
+    static func fetchSpots(completion: @escaping (Result<[Spot], Error>) -> Void ) {
         let predicate = NSPredicate(value: true)
         let querry = CKQuery(recordType: "SpotCK", predicate: predicate)
         let operation = CKQueryOperation(query: querry)
         operation.desiredKeys = ["title", "detail", "category", "location", "municipality", "pictureName"]
         var newSpotsCK: [Spot] = []
-        operation.recordFetchedBlock = { record in
-            guard
-                let date = record.creationDate,
-                let title = record["title"] as? String,
-                let detail = record["detail"] as? String,
-                let recordChangeTag = record.recordChangeTag,
-                let category = record["category"] as? String,
-                let location = record["location"] as? CLLocation,
-                let pictureName = record["pictureName"] as? String,
-                let municipality = record["municipality"] as? String
-            else { return completion([]) }
-            let spotFetched = Spot(id: record.recordID.recordName,
-                              date: date,
-                              title: title,
-                              category: Spot.Category(rawValue: category) ?? .unknown,
-                              detail: detail,
-                              longitude: location.coordinate.longitude,
-                              latitude: location.coordinate.latitude,
-                              picture: pictureName,
-                              municipality: Spot.Municipality(rawValue: municipality) ?? .unknown,
-                              sha: recordChangeTag
-            )
-            newSpotsCK.append(spotFetched)
+
+        operation.recordMatchedBlock = { recordID, recordResult in
+            switch recordResult {
+            case .failure(let error ):
+                return completion(Result.failure(error))
+            case .success(let ckrecord):
+                guard
+                    let date = ckrecord.creationDate,
+                    let title = ckrecord["title"] as? String,
+                    let detail = ckrecord["detail"] as? String,
+                    let recordChangeTag = ckrecord.recordChangeTag,
+                    let category = ckrecord["category"] as? String,
+                    let location = ckrecord["location"] as? CLLocation,
+                    let pictureName = ckrecord["pictureName"] as? String,
+                    let municipality = ckrecord["municipality"] as? String
+                else { return completion(Result.failure(SpotError.failReadingSpotCK)) }
+                let spotFetched = Spot(id: recordID.recordName,
+                                  date: date,
+                                  title: title,
+                                  category: Spot.Category(rawValue: category) ?? .unknown,
+                                  detail: detail,
+                                  longitude: location.coordinate.longitude,
+                                  latitude: location.coordinate.latitude,
+                                  picture: pictureName,
+                                  municipality: Spot.Municipality(rawValue: municipality) ?? .unknown,
+                                  sha: recordChangeTag
+                )
+                newSpotsCK.append(spotFetched)
+            }
         }
-        operation.queryCompletionBlock = { (_, error) in
-            guard error == nil else { return completion([]) }
-            completion(newSpotsCK)
+
+        operation.queryResultBlock = { operationResult in
+            switch operationResult {
+            case .failure( let error ):
+                return completion(Result.failure(error))
+            case .success:
+                completion(Result.success(newSpotsCK))
+            }
         }
         PersistenceController.publicCKDB.add(operation)
     }
 
-    static func saveSpots(context: NSManagedObjectContext = viewContext, spots: [Spot], success: @escaping (Bool) -> Void) {
-        guard spots.count > 0 else { return success(false) }
+    static func saveSpots(context: NSManagedObjectContext = viewContext, spots: [Spot], completion: @escaping (Bool, Error?) -> Void) {
+        guard spots.count > 0 else { return completion(false, SpotError.noSpotsToSave) }
         for spot in spots {
             spot.saveSpot(context: context) { saved in
                 guard saved else {
-                    print(" -> \(spot.title) not saved")
-                    return success(false)
+                    return completion(false, SpotError.failSaveSpot)
                 }
             }
         }
-        return success(true)
+        return completion(true, nil)
     }
 
     func saveSpot(context: NSManagedObjectContext = viewContext, success: @escaping (Bool) -> Void) {
