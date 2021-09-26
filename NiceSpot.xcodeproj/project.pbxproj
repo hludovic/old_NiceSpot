@@ -12,6 +12,7 @@
 		4347D04F26922428001E59A7 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4347D04E26922428001E59A7 /* Persistence.swift */; };
 		4354C3802694D4E000AD29D1 /* TestableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4354C37F2694D4E000AD29D1 /* TestableData.swift */; };
 		4354C3842694D59800AD29D1 /* SpotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4354C3832694D59800AD29D1 /* SpotTests.swift */; };
+		435B5A6626FFFD3000D80761 /* schema.ckdb in Resources */ = {isa = PBXBuildFile; fileRef = 435B5A6526FFFD3000D80761 /* schema.ckdb */; };
 		435D0B142694F0A400247151 /* Spot+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435D0B132694F0A400247151 /* Spot+Extensions.swift */; };
 		4387F18C269011FF00F6355D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4387F18B269011FF00F6355D /* AppDelegate.swift */; };
 		4387F18E269011FF00F6355D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4387F18D269011FF00F6355D /* SceneDelegate.swift */; };
@@ -41,6 +42,7 @@
 		4354C3792694D49900AD29D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4354C37F2694D4E000AD29D1 /* TestableData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestableData.swift; sourceTree = "<group>"; };
 		4354C3832694D59800AD29D1 /* SpotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotTests.swift; sourceTree = "<group>"; };
+		435B5A6526FFFD3000D80761 /* schema.ckdb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = schema.ckdb; sourceTree = "<group>"; };
 		435D0B132694F0A400247151 /* Spot+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Spot+Extensions.swift"; sourceTree = "<group>"; };
 		4387F188269011FF00F6355D /* NiceSpot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NiceSpot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4387F18B269011FF00F6355D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				4387F1A62690195900F6355D /* NiceSpot.xcdatamodeld */,
+				435B5A6526FFFD3000D80761 /* schema.ckdb */,
 				430788232694A6560089DF53 /* Spot.swift */,
 				435D0B132694F0A400247151 /* Spot+Extensions.swift */,
 				4347D04E26922428001E59A7 /* Persistence.swift */,
@@ -243,6 +246,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				435B5A6626FFFD3000D80761 /* schema.ckdb in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -193,61 +193,20 @@ class SpotTests: XCTestCase {
 
     // MARK: - Cloudkit
 
-    func testCloudKit() {
-        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
-        let expectation = XCTestExpectation(description: "Fetching Spots")
-        Spot.fetchSpots { spots in
-            spots.first!.saveSpot(context: self.viewContext) { success in
-                XCTAssertTrue(success)
-            }
-            XCTAssertEqual(1, Spot.getSpots(context: self.viewContext).count)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 10.0)
-    }
-
-    func testMerging() {
-        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
-        let expectation = XCTestExpectation(description: "Fetch Spots")
-        Spot.fetchSpots { fetchedSpots in
-            for spot in fetchedSpots {
-                spot.saveSpot(context: self.viewContext) { saved in
-                    XCTAssertTrue(saved)
-                }
-            }
-            print("⭕️ \(fetchedSpots.first!.title) - \(fetchedSpots.first!.recordChangeTag)")
-            for spot in fetchedSpots {
-                spot.saveSpot(context: self.viewContext) { saved in
-                    XCTAssertTrue(saved)
-                }
-            }
-            XCTAssertEqual(10, Spot.getSpots(context: self.viewContext).count)
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 10.0)
-    }
-
     func testRefreshSpots() {
         XCTAssertEqual(Spot.getSpots(context: viewContext).count, 0)
         let expectation = XCTestExpectation(description: "Refresh Spots")
         Spot.refreshSpots(context: viewContext) { success in
-//            print(Spot.getSpots(context: self.viewContext)[7].title)
-            print("-----")
-            var spots = Spot.getSpots(context: self.viewContext)
-            for spot in spots {
-                print(spot.title)
-            }
-            print("-----")
             XCTAssertTrue(success)
-            TestableData.saveFakeSpots()
-//            print(Spot.getSpots(context: self.viewContext)[9].title)
-            print("-----")
-            spots = Spot.getSpots(context: self.viewContext)
-            for spot in spots {
-                print(spot.title)
+            XCTAssertEqual(Spot.getSpots(context: self.viewContext).count, 9)
+            let secondExpectation = XCTestExpectation(description: "Second refresh Spots")
+            Spot.refreshSpots(context: self.viewContext) { secondRefreshSuccess in
+                XCTAssertTrue(secondRefreshSuccess)
+                XCTAssertEqual(Spot.getSpots(context: self.viewContext).count, 9)
+                secondExpectation.fulfill()
+
             }
-            print("-----")
-            XCTAssertEqual(Spot.getSpots(context: self.viewContext).count, 12)
+            self.wait(for: [secondExpectation], timeout: 10.0)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10.0)

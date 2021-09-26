@@ -119,6 +119,7 @@ class Spot {
 
     static func refreshSpots(context: NSManagedObjectContext = viewContext, success: @escaping (Bool) -> Void) {
         Spot.fetchSpots { fetchedSpots in
+            guard fetchedSpots.count > 0 else { return success(false) }
             Spot.saveSpots(context: context, spots: fetchedSpots) { saved in
                 guard saved else { return success(false) }
             }
@@ -194,9 +195,8 @@ private extension Spot {
 
 // MARK: - CloudKit
 
-extension Spot {
+private extension Spot {
 
-    // TODO: When iOS13 released test with cktool
     static func fetchSpots(completion: @escaping ([Spot]) -> Void) {
         let predicate = NSPredicate(value: true)
         let querry = CKQuery(recordType: "SpotCK", predicate: predicate)
@@ -234,7 +234,7 @@ extension Spot {
         PersistenceController.publicCKDB.add(operation)
     }
 
-    private static func saveSpots(context: NSManagedObjectContext = viewContext, spots: [Spot], success: @escaping (Bool) -> Void) {
+    static func saveSpots(context: NSManagedObjectContext = viewContext, spots: [Spot], success: @escaping (Bool) -> Void) {
         guard spots.count > 0 else { return success(false) }
         for spot in spots {
             spot.saveSpot(context: context) { saved in
