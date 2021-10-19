@@ -14,7 +14,7 @@ class SpotTests: XCTestCase {
 
     override class func setUp() {
         let expectation = XCTestExpectation(description: "Wait 2 seconds before starting tests")
-        _ = XCTWaiter.wait(for: [expectation], timeout: 2.0)
+        _ = XCTWaiter.wait(for: [expectation], timeout: 3.0)
         super.setUp()
     }
 
@@ -38,10 +38,16 @@ class SpotTests: XCTestCase {
         let date = TestableData.getDate(year: 1900, month: 01, day: 1)
         TestableData.saveFakeSpot(date: date, category: "blabla", municipality: "blabla")
         // When
-        let spots = Spot.getSpots(context: viewContext)
-        // Then
-        XCTAssertEqual(4, spots.count)
-        XCTAssertEqual("NewSpot", spots.last?.title)
+        Spot.getSpots(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let spots):
+                // Then
+                XCTAssertEqual(4, spots.count)
+                XCTAssertEqual("NewSpot", spots.last?.title)
+            }
+        }
     }
 
     func testSavedAnRecentSpot_WhenGetAllSpots_ThenNewSpotSavedOnFirst() {
@@ -50,169 +56,397 @@ class SpotTests: XCTestCase {
         let date = TestableData.getDate(year: 2021, month: 01, day: 1)
         TestableData.saveFakeSpot(date: date, category: "blabla", municipality: "blabla")
         // When
-        let spots = Spot.getSpots(context: viewContext)
-        // Then
-        XCTAssertEqual(4, spots.count)
-        XCTAssertEqual("NewSpot", spots.first?.title)
+        let completion: (Result<[Spot], Error>) -> Void = { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let spots):
+                // Then
+                XCTAssertEqual(4, spots.count)
+                XCTAssertEqual("NewSpot", spots.first?.title)
+            }
+        }
+
+        Spot.getSpots(context: viewContext, completion: completion)
     }
 
     func testSavedAWrongCategorySpot_WhenGetTheSpot_ThenCategoryIsUnknown() {
         // Given
         TestableData.saveFakeSpot(date: Date(), category: "blabla", municipality: "blabla")
         // When
-        let spots = Spot.getSpots(context: viewContext)
-        // Then
-        XCTAssertEqual(1, spots.count)
-        XCTAssertEqual(Spot.Category.unknown, spots.first?.category)
-        XCTAssertEqual(Spot.Municipality.unknown, spots.first?.municipality)
+        Spot.getSpots(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let spots):
+                // Then
+                XCTAssertEqual(1, spots.count)
+                XCTAssertEqual(Spot.Category.unknown, spots.first?.category)
+                XCTAssertEqual(Spot.Municipality.unknown, spots.first?.municipality)
+            }
+        }
     }
 
     // MARK: - Favorite
 
     func testSpotsAreSaved_WhenSaveASpotsToFavorite_ThenSpotIsFavorite() {
         TestableData.saveFakeSpots()
-        let spots = Spot.getSpots(context: viewContext)
+        var expectation = XCTestExpectation(description: "Get Spots")
+        var spots: [Spot] = []
+        Spot.getSpots(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let spotsResult):
+                spots = spotsResult
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
         XCTAssertEqual(3, spots.count)
         XCTAssertFalse(spots.first!.isFavorite(context: self.viewContext))
-        var favoriteSpots = Spot.getFavorites(context: self.viewContext)
-        XCTAssertEqual(0, favoriteSpots.count)
+        expectation = XCTestExpectation(description: "Get Favorites")
+        var favorites: [Spot] = []
+        Spot.getFavorites(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let favoritesResult):
+                favorites = favoritesResult
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+        XCTAssertEqual(0, favorites.count)
         // When
-        XCTAssertTrue(spots.first!.saveToFavorite(context: self.viewContext))
-        XCTAssertTrue(spots.last!.saveToFavorite(context: self.viewContext))
+        var resultSaveSpot = spots.first!.saveToFavorite(context: viewContext)
+        switch resultSaveSpot {
+        case .failure(let error):
+            XCTFail("\(error.localizedDescription)")
+        case .success(let success):
+            XCTAssertTrue(success)
+        }
+        resultSaveSpot = spots.last!.saveToFavorite(context: viewContext)
+        switch resultSaveSpot {
+        case .failure(let error):
+            XCTFail("\(error.localizedDescription)")
+        case .success(let success):
+            XCTAssertTrue(success)
+        }
         // Then
         XCTAssertTrue(spots.first!.isFavorite(context: self.viewContext))
-        favoriteSpots = Spot.getFavorites(context: self.viewContext)
-        XCTAssertEqual(2, favoriteSpots.count)
+        expectation = XCTestExpectation(description: "Get Favorites")
+        Spot.getFavorites(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let favoritesResult):
+                favorites = favoritesResult
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+        XCTAssertEqual(2, favorites.count)
     }
 
     func testSpotsAreSaved_WhenSaveASpotTwiceToFavorite_ThenError() {
         TestableData.saveFakeSpots()
-        let spots = Spot.getSpots(context: viewContext)
+        var expectation = XCTestExpectation(description: "Get Spots")
+        var spots: [Spot] = []
+        Spot.getSpots(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let spotsResult):
+                spots = spotsResult
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
         XCTAssertEqual(3, spots.count)
         XCTAssertFalse(spots.first!.isFavorite(context: self.viewContext))
-        var favoriteSpots = Spot.getFavorites(context: self.viewContext)
-        XCTAssertEqual(0, favoriteSpots.count)
+        expectation = XCTestExpectation(description: "Get Favorites")
+        var favorites: [Spot] = []
+        Spot.getFavorites(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let favoritesResult):
+                favorites = favoritesResult
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+        XCTAssertEqual(0, favorites.count)
         // When
-        XCTAssertTrue(spots.first!.saveToFavorite(context: self.viewContext))
-        // Then
-        XCTAssertFalse(spots.first!.saveToFavorite(context: self.viewContext))
-        favoriteSpots = Spot.getFavorites(context: self.viewContext)
-        XCTAssertEqual(1, favoriteSpots.count)
+        var resultSaveSpot = spots.first!.saveToFavorite(context: viewContext)
+        switch resultSaveSpot {
+        case .failure(let error):
+            XCTFail("\(error.localizedDescription)")
+        case .success(let success):
+            XCTAssertTrue(success)
+        }
+        resultSaveSpot = spots.first!.saveToFavorite(context: viewContext)
+        switch resultSaveSpot {
+        case .failure(let error):
+            XCTAssertEqual("Fail fav a spot that's already faved", error.localizedDescription)
+        case .success:
+            XCTFail()
+        }
+        favorites = []
+        expectation = XCTestExpectation(description: "Get Favorites")
+        Spot.getFavorites(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let favoritesResult):
+                favorites = favoritesResult
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+        XCTAssertEqual(1, favorites.count)
     }
 
     func testTwoSpotsSavedToFavorite_WhenRemoveOneToFavorite_ThenThereIsOneFavorite() {
         TestableData.saveFakeSpots()
-        let spots = Spot.getSpots(context: viewContext)
+        var expectation = XCTestExpectation(description: "Get Spots")
+        var spots: [Spot] = []
+        Spot.getSpots(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let spotsResult):
+                spots = spotsResult
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
         XCTAssertEqual(3, spots.count)
-        XCTAssertTrue(spots.first!.saveToFavorite(context: self.viewContext))
+        XCTAssertFalse(spots.first!.isFavorite(context: self.viewContext))
+        var resultSaveSpot = spots.first!.saveToFavorite(context: viewContext)
+        switch resultSaveSpot {
+        case .failure(let error):
+            XCTFail("\(error.localizedDescription)")
+        case .success(let success):
+            XCTAssertTrue(success)
+        }
         XCTAssertTrue(spots.first!.isFavorite(context: self.viewContext))
-        XCTAssertTrue(spots.last!.saveToFavorite(context: self.viewContext))
+        resultSaveSpot = spots.last!.saveToFavorite(context: viewContext)
+        switch resultSaveSpot {
+        case .failure(let error):
+            XCTFail("\(error.localizedDescription)")
+        case .success(let success):
+            XCTAssertTrue(success)
+        }
         XCTAssertTrue(spots.last!.isFavorite(context: self.viewContext))
-        var favoriteSpots = Spot.getFavorites(context: self.viewContext)
-        XCTAssertEqual(2, favoriteSpots.count)
         // When
-        XCTAssertTrue(spots.first!.removeToFavorite(context: self.viewContext))
+        let resultRemoveSpot = spots.first!.removeToFavorite(context: viewContext)
+        switch resultRemoveSpot {
+        case .failure(let error):
+            XCTFail("\(error.localizedDescription)")
+        case .success(let success):
+            XCTAssertTrue(success)
+        }
         // Then
-        favoriteSpots = Spot.getFavorites(context: self.viewContext)
-        XCTAssertEqual(1, favoriteSpots.count)
+        var favorites: [Spot] = []
+        expectation = XCTestExpectation(description: "Get Favorites")
+        Spot.getFavorites(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let favoritesResult):
+                favorites = favoritesResult
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+        XCTAssertEqual(1, favorites.count)
     }
 
     func testSpotSavedToFavorite_WhenRemoveTwiceToFavorite_ThenError() {
         TestableData.saveFakeSpots()
-        let spots = Spot.getSpots(context: viewContext)
+        var expectation = XCTestExpectation(description: "Get Spots")
+        var spots: [Spot] = []
+        Spot.getSpots(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let spotsResult):
+                spots = spotsResult
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
         XCTAssertEqual(3, spots.count)
-        XCTAssertTrue(spots.first!.saveToFavorite(context: self.viewContext))
+        XCTAssertFalse(spots.first!.isFavorite(context: self.viewContext))
+        var resultSaveSpot = spots.first!.saveToFavorite(context: viewContext)
+        switch resultSaveSpot {
+        case .failure(let error):
+            XCTFail("\(error.localizedDescription)")
+        case .success(let success):
+            XCTAssertTrue(success)
+        }
         XCTAssertTrue(spots.first!.isFavorite(context: self.viewContext))
-        var favoriteSpots = Spot.getFavorites(context: self.viewContext)
-        XCTAssertEqual(1, favoriteSpots.count)
+        resultSaveSpot = spots.last!.saveToFavorite(context: viewContext)
+        switch resultSaveSpot {
+        case .failure(let error):
+            XCTFail("\(error.localizedDescription)")
+        case .success(let success):
+            XCTAssertTrue(success)
+        }
+        XCTAssertTrue(spots.last!.isFavorite(context: self.viewContext))
         // When
-        XCTAssertTrue(spots.first!.removeToFavorite(context: self.viewContext))
-        // Then
-        XCTAssertFalse(spots.first!.removeToFavorite(context: self.viewContext))
-        favoriteSpots = Spot.getFavorites(context: self.viewContext)
-        XCTAssertEqual(0, favoriteSpots.count)
+        var resultRemoveSpot = spots.first!.removeToFavorite(context: viewContext)
+        switch resultRemoveSpot {
+        case .failure(let error):
+            XCTFail("\(error.localizedDescription)")
+        case .success(let success):
+            XCTAssertTrue(success)
+        }
+        resultRemoveSpot = spots.first!.removeToFavorite(context: viewContext)
+        switch resultRemoveSpot {
+        case .failure(let error):
+            // Then
+            XCTAssertEqual("Fail unfav a spot that's already unfaved", error.localizedDescription)
+        case .success:
+            XCTFail()
+        }
+        var favorites: [Spot] = []
+        expectation = XCTestExpectation(description: "Get Favorites")
+        Spot.getFavorites(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let favoritesResult):
+                favorites = favoritesResult
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+        XCTAssertEqual(1, favorites.count)
     }
 
     func testOldSpotSavedToFavorite_WhenGetFavorites_ThenDisplayFavoritesOrderedByDate() {
         TestableData.saveFakeSpots()
         let date = TestableData.getDate(year: 1900, month: 01, day: 1)
-        let spots = Spot.getSpots(context: viewContext)
-        XCTAssertTrue(spots[0].saveToFavorite(context: viewContext))
-        XCTAssertTrue(spots[1].saveToFavorite(context: viewContext, date: date))
-        XCTAssertEqual(spots[1].title, "La Plage de la Caravelle New")
-        XCTAssertTrue(spots[2].saveToFavorite(context: viewContext))
-        // When
-        let favorites = Spot.getFavorites(context: viewContext)
-        XCTAssertEqual(favorites[0].title, "La Plage de la Caravelle New")
-    }
-
-    // MARK: - Search
-
-    func testSpotsSaved_WhenSearchAWordThatExistInTitles_ThenReturnSpots() {
-        // Given
-        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
-        TestableData.saveFakeSpots()
-        XCTAssertEqual(3, Spot.getSpots(context: viewContext).count)
-        // When
-        let result = Spot.searchSpots(context: viewContext, titleContains: "plage")
-        // Then
-        XCTAssertEqual(result.count, 2)
-        let title1 = result.first!.title
-        XCTAssertTrue(title1.localizedCaseInsensitiveContains("plage"))
-    }
-
-    func testSpotsSaved_WhenSearchAWordThatNOTExistInTitles_ThenReturnError() {
-        // Given
-        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
-        TestableData.saveFakeSpots()
-        XCTAssertEqual(3, Spot.getSpots(context: viewContext).count)
-        // When
-        let result = Spot.searchSpots(context: viewContext, titleContains: "route")
-        // Then
-        XCTAssertEqual(result.count, 0)
-    }
-
-    func testSpotsSaved_WhenSearchEmptyWord_ThenReturnError() {
-        // Given
-        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
-        TestableData.saveFakeSpots()
-        XCTAssertEqual(3, Spot.getSpots(context: viewContext).count)
-        // When
-        let result1 = Spot.searchSpots(context: viewContext, titleContains: " ")
-        let result2 = Spot.searchSpots(context: viewContext, titleContains: "")
-        // Then
-        XCTAssertEqual(result1.count, 0)
-        XCTAssertEqual(result2.count, 0)
-    }
-
-    func testNoSpotsSaved_WhenSearchWord_ThenReturnError() {
-        // Given
-        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
-        // When
-        let result = Spot.searchSpots(context: viewContext, titleContains: "plage")
-        // Then
-        XCTAssertEqual(result.count, 0)
-    }
-
-    // MARK: - Save
-
-    func testSpotsAreSaved_WhenSaveItAgain_ThenItIsMerged() {
-        TestableData.saveFakeSpots()
-        XCTAssertEqual(3, Spot.getSpots(context: viewContext).count)
-    }
-
-    // MARK: - Cloudkit
-
-    func testRefreshSpots() {
-        XCTAssertEqual(Spot.getSpots(context: viewContext).count, 0)
-        let expectation = XCTestExpectation(description: "Refresh Spots")
-        Spot.refreshSpots(context: viewContext) { success, error in
-            XCTAssertTrue(success)
-            XCTAssertNil(error)
-            XCTAssertEqual(Spot.getSpots(context: self.viewContext).count, 9)
+        var expectation = XCTestExpectation(description: "Get Spots")
+        var spots: [Spot] = []
+        Spot.getSpots(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let spotsResult):
+                spots = spotsResult
+            }
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 10.0)
+        XCTAssertEqual(3, spots.count)
+        var resultSaveSpot = spots[0].saveToFavorite(context: viewContext)
+        switch resultSaveSpot {
+        case .failure(let error):
+            XCTFail("\(error.localizedDescription)")
+        case .success(let success):
+            XCTAssertTrue(success)
+        }
+        resultSaveSpot = spots[1].saveToFavorite(context: viewContext, date: date)
+        switch resultSaveSpot {
+        case .failure(let error):
+            XCTFail("\(error.localizedDescription)")
+        case .success(let success):
+            XCTAssertTrue(success)
+        }
+        XCTAssertEqual(spots[1].title, "La Plage de la Caravelle New")
+        resultSaveSpot = spots[2].saveToFavorite(context: viewContext)
+        switch resultSaveSpot {
+        case .failure(let error):
+            XCTFail("\(error.localizedDescription)")
+        case .success(let success):
+            XCTAssertTrue(success)
+        }
+        // When
+        var favorites: [Spot] = []
+        expectation = XCTestExpectation(description: "Get Favorites")
+        Spot.getFavorites(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let favoritesResult):
+                favorites = favoritesResult
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+        XCTAssertEqual(favorites[0].title, "La Plage de la Caravelle New")
     }
+
+//    // MARK: - Search
+//
+//    func testSpotsSaved_WhenSearchAWordThatExistInTitles_ThenReturnSpots() {
+//        // Given
+//        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
+//        TestableData.saveFakeSpots()
+//        XCTAssertEqual(3, Spot.getSpots(context: viewContext).count)
+//        // When
+//        let result = Spot.searchSpots(context: viewContext, titleContains: "plage")
+//        // Then
+//        XCTAssertEqual(result.count, 2)
+//        let title1 = result.first!.title
+//        XCTAssertTrue(title1.localizedCaseInsensitiveContains("plage"))
+//    }
+//
+//    func testSpotsSaved_WhenSearchAWordThatNOTExistInTitles_ThenReturnError() {
+//        // Given
+//        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
+//        TestableData.saveFakeSpots()
+//        XCTAssertEqual(3, Spot.getSpots(context: viewContext).count)
+//        // When
+//        let result = Spot.searchSpots(context: viewContext, titleContains: "route")
+//        // Then
+//        XCTAssertEqual(result.count, 0)
+//    }
+//
+//    func testSpotsSaved_WhenSearchEmptyWord_ThenReturnError() {
+//        // Given
+//        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
+//        TestableData.saveFakeSpots()
+//        XCTAssertEqual(3, Spot.getSpots(context: viewContext).count)
+//        // When
+//        let result1 = Spot.searchSpots(context: viewContext, titleContains: " ")
+//        let result2 = Spot.searchSpots(context: viewContext, titleContains: "")
+//        // Then
+//        XCTAssertEqual(result1.count, 0)
+//        XCTAssertEqual(result2.count, 0)
+//    }
+//
+//    func testNoSpotsSaved_WhenSearchWord_ThenReturnError() {
+//        // Given
+//        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
+//        // When
+//        let result = Spot.searchSpots(context: viewContext, titleContains: "plage")
+//        // Then
+//        XCTAssertEqual(result.count, 0)
+//    }
+//
+//    // MARK: - Save
+//
+//    func testSpotsAreSaved_WhenSaveItAgain_ThenItIsMerged() {
+//        TestableData.saveFakeSpots()
+//        XCTAssertEqual(3, Spot.getSpots(context: viewContext).count)
+//    }
+//
+//    // MARK: - Cloudkit
+//
+//    func testRefreshSpots() {
+//        XCTAssertEqual(Spot.getSpots(context: viewContext).count, 0)
+//        let expectation = XCTestExpectation(description: "Refresh Spots")
+//        Spot.refreshSpots(context: viewContext) { error in
+//            XCTAssertNil(error)
+//            XCTAssertEqual(Spot.getSpots(context: self.viewContext).count, 9)
+//            expectation.fulfill()
+//        }
+//        wait(for: [expectation], timeout: 10.0)
+//    }
 
 }

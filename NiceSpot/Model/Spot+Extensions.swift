@@ -62,8 +62,13 @@ extension Spot {
 
 enum SpotError: Error {
     case failReadingSpotCK
-    case failSaveSpot
+    case failReadingSpotMOWhenConvert
+    case readSpotMOWhenGettingSpot
+    case readFavoriteInGetFav
     case noSpotsToSave
+    case searchSpotWrongName
+    case unfavAlreadyUnfaved
+    case favAlreadyFaved
 }
 
 extension SpotError: LocalizedError {
@@ -73,8 +78,18 @@ extension SpotError: LocalizedError {
             return NSLocalizedString("Error reading a spot fetched", comment: "")
         case .noSpotsToSave:
             return NSLocalizedString("Fail SaveSpots, passing empty spots to save", comment: "")
-        case .failSaveSpot:
-            return NSLocalizedString("Fail saving a spot", comment: "")
+        case .failReadingSpotMOWhenConvert:
+            return NSLocalizedString("Fail reading spotMO when converting SpotMO to Spot", comment: "")
+        case .searchSpotWrongName:
+            return NSLocalizedString("The word used to search a spot is wrong", comment: "")
+        case .readSpotMOWhenGettingSpot:
+            return NSLocalizedString("Fail reading spotMO when converting when Getting Getting a spot", comment: "")
+        case .readFavoriteInGetFav:
+            return NSLocalizedString("Unable to read the favorite ID when getting the favorites", comment: "")
+        case .unfavAlreadyUnfaved:
+            return NSLocalizedString("Fail unfav a spot that's already unfaved", comment: "")
+        case .favAlreadyFaved:
+            return NSLocalizedString("Fail fav a spot that's already faved", comment: "")
         }
     }
 }
