@@ -63,6 +63,7 @@ extension Spot {
 enum SpotError: Error {
     case failReadingSpotCK
     case failReadingSpotMOWhenConvert
+    case readFavoriteMOWhenGettingFavoriteMO
     case readSpotMOWhenGettingSpot
     case readFavoriteInGetFav
     case noSpotsToSave
@@ -90,6 +91,9 @@ extension SpotError: LocalizedError {
             return NSLocalizedString("Fail unfav a spot that's already unfaved", comment: "")
         case .favAlreadyFaved:
             return NSLocalizedString("Fail fav a spot that's already faved", comment: "")
+        case .readFavoriteMOWhenGettingFavoriteMO:
+            return NSLocalizedString("Fail Reading FavoriteMO when getting a FavoriteMO", comment: "")
+
         }
     }
 }

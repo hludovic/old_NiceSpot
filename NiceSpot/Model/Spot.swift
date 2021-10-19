@@ -205,8 +205,7 @@ private extension Spot {
         } catch let error {
             return .failure(error)
         }
-        // ATTENTION ERROR
-        guard let result = resultMO.first else { return .failure(SpotError.failReadingSpotMOWhenConvert) }
+        guard let result = resultMO.first else { return .failure(SpotError.readFavoriteMOWhenGettingFavoriteMO) }
         return .success(result)
     }
 
