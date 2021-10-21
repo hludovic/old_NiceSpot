@@ -21,6 +21,7 @@
 		4387F1952690120000F6355D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4387F1942690120000F6355D /* Assets.xcassets */; };
 		4387F1982690120000F6355D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4387F1962690120000F6355D /* LaunchScreen.storyboard */; };
 		4387F1A82690195900F6355D /* NiceSpot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4387F1A62690195900F6355D /* NiceSpot.xcdatamodeld */; };
+		43B70202271F3F6300978027 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B70201271F3F6300978027 /* SubscriptionManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,7 @@
 		4387F1992690120000F6355D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4387F1A0269012F600F6355D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4387F1A72690195900F6355D /* NiceSpot.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = NiceSpot.xcdatamodel; sourceTree = "<group>"; };
+		43B70201271F3F6300978027 /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +163,7 @@
 				430788232694A6560089DF53 /* Spot.swift */,
 				435D0B132694F0A400247151 /* Spot+Extensions.swift */,
 				4347D04E26922428001E59A7 /* Persistence.swift */,
+				43B70201271F3F6300978027 /* SubscriptionManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -300,6 +303,7 @@
 				4387F18C269011FF00F6355D /* AppDelegate.swift in Sources */,
 				430788242694A6560089DF53 /* Spot.swift in Sources */,
 				4387F1A82690195900F6355D /* NiceSpot.xcdatamodeld in Sources */,
+				43B70202271F3F6300978027 /* SubscriptionManager.swift in Sources */,
 				4387F18E269011FF00F6355D /* SceneDelegate.swift in Sources */,
 				4347D04F26922428001E59A7 /* Persistence.swift in Sources */,
 				435D0B142694F0A400247151 /* Spot+Extensions.swift in Sources */,

@@ -5,7 +5,7 @@ identifier_name:
 type_body_length:
   - 300 # warning
   - 400 # error
-line_length: 140
+line_length: 150
 
 excluded: # paths to ignore during linting. Takes precedence over `included`.
   - NiceSpot/Supporting\ files/*

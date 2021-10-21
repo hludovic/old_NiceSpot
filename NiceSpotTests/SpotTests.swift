@@ -13,8 +13,8 @@ class SpotTests: XCTestCase {
     var viewContext: NSManagedObjectContext!
 
     override class func setUp() {
-        let expectation = XCTestExpectation(description: "Wait 2 seconds before starting tests")
-        _ = XCTWaiter.wait(for: [expectation], timeout: 3.0)
+//        let expectation = XCTestExpectation(description: "Wait 2 seconds before starting tests")
+//        _ = XCTWaiter.wait(for: [expectation], timeout: 3.0)
         super.setUp()
     }
 
@@ -435,18 +435,49 @@ class SpotTests: XCTestCase {
 //        TestableData.saveFakeSpots()
 //        XCTAssertEqual(3, Spot.getSpots(context: viewContext).count)
 //    }
-//
-//    // MARK: - Cloudkit
-//
-//    func testRefreshSpots() {
-//        XCTAssertEqual(Spot.getSpots(context: viewContext).count, 0)
-//        let expectation = XCTestExpectation(description: "Refresh Spots")
-//        Spot.refreshSpots(context: viewContext) { error in
-//            XCTAssertNil(error)
-//            XCTAssertEqual(Spot.getSpots(context: self.viewContext).count, 9)
-//            expectation.fulfill()
-//        }
-//        wait(for: [expectation], timeout: 10.0)
-//    }
 
+    // MARK: - Cloudkit
+
+    func testRefreshSpots() {
+        let expectation = XCTestExpectation(description: "Get Spots")
+        var spots: [Spot] = []
+        Spot.getSpots(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let spotsResult):
+                spots = spotsResult
+            }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 10.0)
+        XCTAssertEqual(0, spots.count)
+        // When
+        let expectation2 = XCTestExpectation(description: "Refresh Spots")
+        Spot.refreshSpots(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription) ❌")
+            case .success(let success):
+                XCTAssertTrue(success)
+            }
+            expectation2.fulfill()
+        }
+        wait(for: [expectation2], timeout: 10.0)
+        // Then
+        let expectation3 = XCTestExpectation(description: "Get Spots")
+        spots = []
+        Spot.getSpots(context: viewContext) { result in
+            switch result {
+            case .failure(let error):
+                XCTFail("\(error.localizedDescription)")
+            case .success(let spotsResult):
+                spots = spotsResult
+            }
+            expectation3.fulfill()
+        }
+        wait(for: [expectation3], timeout: 10.0)
+        XCTAssertEqual(9, spots.count)
+    }
+    
 }

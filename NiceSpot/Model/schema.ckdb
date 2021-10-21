@@ -24,7 +24,7 @@ DEFINE SCHEMA
         "___modTime"    TIMESTAMP,
         "___modifiedBy" REFERENCE,
         "___recordID"   REFERENCE QUERYABLE,
-        category        STRING,
+        category        STRING QUERYABLE,
         detail          STRING,
         location        LOCATION,
         municipality    STRING,

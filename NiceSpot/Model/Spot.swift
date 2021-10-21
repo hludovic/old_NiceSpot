@@ -303,14 +303,19 @@ private extension Spot {
 
     static func saveSpots(context: NSManagedObjectContext, spots: [Spot], completion: @escaping (Result<Bool, Error>) -> Void) {
         guard spots.count > 0 else { return completion(Result.failure(SpotError.noSpotsToSave)) }
+        let dispatchGroup = DispatchGroup()
         for spot in spots {
+            dispatchGroup.enter()
             spot.saveSpot(context: context) { result in
                 if case Result.failure(let error) = result {
                     return completion(Result.failure(error))
                 }
             }
+            dispatchGroup.leave()
         }
-        return completion(Result.success(true))
+        dispatchGroup.notify(queue: .main) {
+            return completion(Result.success(true))
+        }
     }
 
     func saveSpot(context: NSManagedObjectContext, completion: @escaping (Result<Bool, Error>) -> Void) {
