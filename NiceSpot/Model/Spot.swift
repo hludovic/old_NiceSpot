@@ -45,6 +45,9 @@ class Spot {
         self.recordChangeTag = sha
     }
 
+    /// <#Description#>
+    /// - Parameter context: <#context description#>
+    /// - Returns: <#description#>
     func isFavorite(context: NSManagedObjectContext = viewContext) -> Bool {
         let request: NSFetchRequest<FavoriteMO> = FavoriteMO.fetchRequest()
         let predicate = NSPredicate(format: "spotID == %@", self.recordID)

@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		430788242694A6560089DF53 /* Spot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430788232694A6560089DF53 /* Spot.swift */; };
 		43400CE226E70F3C008CE2A4 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43400CE126E70F3C008CE2A4 /* CloudKit.framework */; };
-		4347D04F26922428001E59A7 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4347D04E26922428001E59A7 /* Persistence.swift */; };
+		4347D04F26922428001E59A7 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4347D04E26922428001E59A7 /* PersistenceController.swift */; };
 		4354C3802694D4E000AD29D1 /* TestableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4354C37F2694D4E000AD29D1 /* TestableData.swift */; };
 		4354C3842694D59800AD29D1 /* SpotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4354C3832694D59800AD29D1 /* SpotTests.swift */; };
 		435B5A6626FFFD3000D80761 /* schema.ckdb in Resources */ = {isa = PBXBuildFile; fileRef = 435B5A6526FFFD3000D80761 /* schema.ckdb */; };
@@ -22,6 +22,9 @@
 		4387F1982690120000F6355D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4387F1962690120000F6355D /* LaunchScreen.storyboard */; };
 		4387F1A82690195900F6355D /* NiceSpot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4387F1A62690195900F6355D /* NiceSpot.xcdatamodeld */; };
 		43B70202271F3F6300978027 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B70201271F3F6300978027 /* SubscriptionManager.swift */; };
+		43BC3AFA2721EEAF009F9900 /* ProjectErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43BC3AF92721EEAF009F9900 /* ProjectErrors.swift */; };
+		43CA157B273EFED600A6D28D /* SubscriptionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43CA157A273EFED600A6D28D /* SubscriptionsTests.swift */; };
+		43DB2A0C2723113A00B7AA3C /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DB2A0B2723113A00B7AA3C /* User.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,7 +41,7 @@
 		430788232694A6560089DF53 /* Spot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spot.swift; sourceTree = "<group>"; };
 		43400CDF26E70F38008CE2A4 /* NiceSpot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NiceSpot.entitlements; sourceTree = "<group>"; };
 		43400CE126E70F3C008CE2A4 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
-		4347D04E26922428001E59A7 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		4347D04E26922428001E59A7 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		4354C3752694D49900AD29D1 /* NiceSpotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NiceSpotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4354C3792694D49900AD29D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4354C37F2694D4E000AD29D1 /* TestableData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestableData.swift; sourceTree = "<group>"; };
@@ -56,6 +59,9 @@
 		4387F1A0269012F600F6355D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4387F1A72690195900F6355D /* NiceSpot.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = NiceSpot.xcdatamodel; sourceTree = "<group>"; };
 		43B70201271F3F6300978027 /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
+		43BC3AF92721EEAF009F9900 /* ProjectErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectErrors.swift; sourceTree = "<group>"; };
+		43CA157A273EFED600A6D28D /* SubscriptionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionsTests.swift; sourceTree = "<group>"; };
+		43DB2A0B2723113A00B7AA3C /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				4354C3832694D59800AD29D1 /* SpotTests.swift */,
+				43CA157A273EFED600A6D28D /* SubscriptionsTests.swift */,
 				4354C37F2694D4E000AD29D1 /* TestableData.swift */,
 				4354C3792694D49900AD29D1 /* Info.plist */,
 			);
@@ -132,6 +139,7 @@
 			children = (
 				4387F18B269011FF00F6355D /* AppDelegate.swift */,
 				4387F18D269011FF00F6355D /* SceneDelegate.swift */,
+				43BC3AF92721EEAF009F9900 /* ProjectErrors.swift */,
 				4387F1942690120000F6355D /* Assets.xcassets */,
 				4387F1992690120000F6355D /* Info.plist */,
 			);
@@ -162,8 +170,9 @@
 				435B5A6526FFFD3000D80761 /* schema.ckdb */,
 				430788232694A6560089DF53 /* Spot.swift */,
 				435D0B132694F0A400247151 /* Spot+Extensions.swift */,
-				4347D04E26922428001E59A7 /* Persistence.swift */,
+				43DB2A0B2723113A00B7AA3C /* User.swift */,
 				43B70201271F3F6300978027 /* SubscriptionManager.swift */,
+				4347D04E26922428001E59A7 /* PersistenceController.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -281,7 +290,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which swiftlint >/dev/null; then\n# swiftlint autocorrect && swiftlint\n    swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which swiftlint >/dev/null; then\nswiftlint autocorrect && swiftlint\n    #swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -292,6 +301,7 @@
 			files = (
 				4354C3802694D4E000AD29D1 /* TestableData.swift in Sources */,
 				4354C3842694D59800AD29D1 /* SpotTests.swift in Sources */,
+				43CA157B273EFED600A6D28D /* SubscriptionsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,12 +310,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				4387F190269011FF00F6355D /* ViewController.swift in Sources */,
+				43BC3AFA2721EEAF009F9900 /* ProjectErrors.swift in Sources */,
 				4387F18C269011FF00F6355D /* AppDelegate.swift in Sources */,
 				430788242694A6560089DF53 /* Spot.swift in Sources */,
 				4387F1A82690195900F6355D /* NiceSpot.xcdatamodeld in Sources */,
 				43B70202271F3F6300978027 /* SubscriptionManager.swift in Sources */,
 				4387F18E269011FF00F6355D /* SceneDelegate.swift in Sources */,
-				4347D04F26922428001E59A7 /* Persistence.swift in Sources */,
+				4347D04F26922428001E59A7 /* PersistenceController.swift in Sources */,
+				43DB2A0C2723113A00B7AA3C /* User.swift in Sources */,
 				435D0B142694F0A400247151 /* Spot+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

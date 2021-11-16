@@ -381,8 +381,8 @@ class SpotTests: XCTestCase {
         XCTAssertEqual(favorites[0].title, "La Plage de la Caravelle New")
     }
 
-//    // MARK: - Search
-//
+    // MARK: - Search
+
 //    func testSpotsSaved_WhenSearchAWordThatExistInTitles_ThenReturnSpots() {
 //        // Given
 //        XCTAssertEqual(0, Spot.getSpots(context: viewContext).count)
